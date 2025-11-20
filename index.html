@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Voz do Povo: Política traduzida para áudio.">
+    <title>Voz do Povo | Hackathon</title>
+
+    <!-- Fonte Google (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome (Ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- TOPO -->
+    <header class="main-header">
+        <div class="logo-container">
+            <i class="fa-solid fa-bullhorn"></i>
+            <span>Voz do Povo</span>
+        </div>
+        <div class="header-actions">
+            <!-- Botão Alternar Tema (Dark Mode) -->
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar Tema">
+                <i class="fa-solid fa-moon" id="theme-icon"></i>
+            </button>
+            <!-- Ícone de Perfil (Classe user-icon para o Dark Mode funcionar) -->
+            <i class="fa-solid fa-user-circle user-icon"></i>
+        </div>
+    </header>
+
+    <!-- NOTIFICAÇÃO DE GPS (Toast) -->
+    <div id="gps-toast" class="gps-toast hidden">
+        <i class="fa-solid fa-location-dot"></i>
+        <span>Localização: <strong>Seu Bairro</strong></span>
+    </div>
+
+    <!-- ÁREA PRINCIPAL -->
+    <main id="app-container">
+
+        <!-- =========================================
+             VIEW 1: HOME (Feed Inteligente)
+             ========================================= -->
+        <section id="view-home" class="view active">
+            
+            <!-- Filtros de Contexto -->
+            <div class="filter-scroll">
+                <button class="filter-pill active">📍 Minha Rua</button>
+                <button class="filter-pill">🔥 Em Alta</button>
+                <button class="filter-pill">🇧🇷 Brasil</button>
+                <button class="filter-pill">📚 Educação</button>
+            </div>
+
+            <div class="hero-text">
+                <h1>Leis explicadas pra você ouvir.</h1>
+                <p>Sem leitura chata. Escolha um tema e aperte o play.</p>
+            </div>
+
+            <!-- Lista de Cards -->
+            <div class="cards-container">
+                
+                <!-- Card 1 -->
+                <article class="pl-card" onclick="selectPL(1)">
+                    <span class="tag-badge urgent">🔥 Polêmica</span>
+                    <h3>PL das Fake News</h3>
+                    <p>Regras para redes sociais e combate à desinformação.</p>
+                </article>
+
+                <!-- Card 2 -->
+                <article class="pl-card" onclick="selectPL(2)">
+                    <span class="tag-badge money">💰 Seu Bolso</span>
+                    <h3>Reforma Tributária</h3>
+                    <p>Mudança nos preços do mercado e cashback.</p>
+                </article>
+
+                <!-- Card 3 -->
+                <article class="pl-card" onclick="selectPL(3)">
+                    <span class="tag-badge shop">📦 Compras</span>
+                    <h3>Taxação de Importações</h3>
+                    <p>Imposto da Shein, Shopee e compras internacionais.</p>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- =========================================
+             VIEW 2: DETALHES (Áudio & Votação)
+             ========================================= -->
+        <section id="view-details" class="view hidden">
+            <div class="nav-back" onclick="navigateTo('home')">
+                <i class="fa-solid fa-arrow-left"></i> Voltar
+            </div>
+
+            <div class="detail-container">
+                <div class="pl-header-detail">
+                    <h1 id="pl-title-display">Título do Projeto</h1>
+                    <p id="pl-summary-display">Resumo oficial...</p>
+                </div>
+
+                <hr class="divider">
+
+                <!-- Input de Interesse -->
+                <div class="ai-interaction-box">
+                    <label>Me explica como se fosse...</label>
+                    <div class="input-group">
+                        <input type="text" id="user-interest" placeholder="Ex: Futebol, Novela, Conversa de bar...">
+                        <button id="btn-explain" onclick="getAIExplanation()">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- RESULTADO DA IA -->
+                <div id="ai-result" class="result-box hidden">
+                    
+                    <div id="loader" class="hidden">
+                        <i class="fa-solid fa-spinner fa-spin"></i> Traduzindo para o povo...
+                    </div>
+
+                    <!-- 1. CARD DE ÁUDIO -->
+                    <div id="audio-card" class="audio-player-card hidden">
+                        <div class="audio-icon">
+                            <i class="fa-solid fa-headphones"></i>
+                        </div>
+                        <div class="audio-controls">
+                            <p class="audio-label">Áudio Gerado por IA</p>
+                            <div class="control-buttons">
+                                <button onclick="toggleAudio()" id="play-pause-btn" class="btn-play">
+                                    <i class="fa-solid fa-play"></i> Ouvir Agora
+                                </button>
+                                <button onclick="stopAudio()" class="btn-stop">
+                                    <i class="fa-solid fa-stop"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. TEXTO (Transcrição) -->
+                    <div id="explanation-content" class="hidden">
+                        <h3>📝 Explicação:</h3>
+                        <p id="text-output"></p>
+                    </div>
+
+                    <!-- 3. VOTAÇÃO (Engajamento) -->
+                    <div id="vote-section" class="vote-box hidden">
+                        <h3>O que você acha dessa lei?</h3>
+                        <div class="thumbs-container">
+                            <button class="thumb-btn up" onclick="vote('up')">
+                                <i class="fa-solid fa-thumbs-up"></i> Concordo
+                            </button>
+                            <button class="thumb-btn down" onclick="vote('down')">
+                                <i class="fa-solid fa-thumbs-down"></i> Discordo
+                            </button>
+                        </div>
+
+                        <!-- Tags de Motivo (Aparecem ao votar) -->
+                        <div id="tags-container" class="tags-cloud hidden">
+                            <p>Por qual motivo?</p>
+                            <button>Ajuda o Pobre</button>
+                            <button>É Justo</button>
+                            <button>Prejudica meu bolso</button>
+                            <button>Não entendi</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- NAVEGAÇÃO MOBILE (Fixo embaixo) -->
+    <nav class="bottom-nav">
+        <button class="nav-btn active" onclick="navigateTo('home')" id="nav-home">
+            <i class="fa-solid fa-house"></i>
+            <span>Início</span>
+        </button>
+        <button class="nav-btn" onclick="navigateTo('about')" id="nav-about">
+            <i class="fa-solid fa-circle-info"></i>
+            <span>Sobre</span>
+        </button>
+    </nav>
+
+    <script src="script.js"></script>
+</body>
+</html>
