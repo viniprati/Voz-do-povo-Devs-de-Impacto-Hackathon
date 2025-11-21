@@ -1,18 +1,2 @@
 
 .env
-
-
-__pycache__/
-*.py[cod]
-*$py.class
-
-
-venv/
-.venv/
-env/
-.vercel
-.vscode/
-.idea/
-
-Thumbs.db
-.DS_Store
