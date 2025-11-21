@@ -2,7 +2,7 @@
    SCRIPT.JS - Lógica do Frontend "Voz do Povo" (Completo)
    ========================================================================== */
 
-const API_URL = "http://localhost:8000/explain";
+const API_URL = "";
 let currentPL = null;
 let synth = window.speechSynthesis; // API nativa de voz
 let utterance = null;
