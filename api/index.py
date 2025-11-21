@@ -1,4 +1,5 @@
 import os
+import sys
 import uvicorn
 import requests
 from fastapi import FastAPI, HTTPException
@@ -11,33 +12,63 @@ import re
 from contextlib import asynccontextmanager
 
 # =====================================================
-# 1. CONFIGURAÇÃO
+# 1. AJUSTE DE CAMINHOS (CRUCIAL PARA NOVA ESTRUTURA)
 # =====================================================
+# Descobre onde está a raiz do projeto (uma pasta acima da 'api')
+current_dir = os.path.dirname(os.path.abspath(__file__))
+root_dir = os.path.dirname(current_dir)
+
+# Tenta carregar .env da raiz
 try:
-    load_dotenv()
+    load_dotenv(os.path.join(root_dir, ".env"))
 except:
     pass
 
 API_KEY = os.getenv("GOOGLE_API_KEY")
+ACTIVE_MODEL = None
 
 # =====================================================
-# 2. INICIALIZAÇÃO (PADRÃO MODERNO - LIFESPAN)
+# 2. AUTO-CONFIGURAÇÃO
+# =====================================================
+def find_best_model(api_key):
+    """Descobre qual modelo a chave aceita para evitar erro 404"""
+    print("🔍 Buscando modelos disponíveis...")
+    url = f"https://generativelanguage.googleapis.com/v1beta/models?key={api_key}"
+    try:
+        response = requests.get(url)
+        data = response.json()
+        if "error" in data: return None
+        
+        # Procura Flash ou Pro
+        for model in data.get('models', []):
+            if "generateContent" in model.get('supportedGenerationMethods', []):
+                name = model['name'].replace("models/", "")
+                if "flash" in name or "pro" in name:
+                    print(f"✅ MODELO SELECIONADO: {name}")
+                    return name
+        return "gemini-1.5-flash"
+    except:
+        return "gemini-1.5-flash"
+
+# =====================================================
+# 3. INICIALIZAÇÃO
 # =====================================================
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Código que roda ao INICIAR
-    print("✅ SERVIDOR ONLINE (Versão Blindada).")
+    global ACTIVE_MODEL
+    print("✅ SERVIDOR ONLINE (Estrutura /api).")
     if API_KEY:
-        print(f"✅ API KEY Carregada: ...{API_KEY[-4:]}")
+        print(f"🔑 Chave detectada: ...{API_KEY[-4:]}")
+        ACTIVE_MODEL = find_best_model(API_KEY)
+        if not ACTIVE_MODEL: ACTIVE_MODEL = "gemini-1.5-flash"
     else:
-        print("⚠️ API KEY NÃO ENCONTRADA (Modo Simulação Ativo)")
+        print("⚠️ SEM CHAVE: Modo Simulação Ativo.")
     yield
-    # Código que rodaria ao DESLIGAR
 
 app = FastAPI(
     title="Voz do Povo API",
-    description="Backend Híbrido (Requests Direct + Fallback)",
-    version="1.5.0",
+    docs_url="/api/docs", # Ajuste para documentação funcionar na subpasta
+    openapi_url="/api/openapi.json",
     lifespan=lifespan
 )
 
@@ -49,7 +80,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- MODELOS DE DADOS ---
 class ExplainRequest(BaseModel):
     pl_text: str
     user_interest: str
@@ -62,116 +92,70 @@ class FeedbackRequest(BaseModel):
     reason: str
 
 # =====================================================
-# 3. CONEXÃO GOOGLE (TENTA TODOS OS MODELOS)
+# 4. LÓGICA DA IA (COM FALLBACK)
 # =====================================================
-def call_gemini_api_direct(prompt, api_key):
+def call_gemini(prompt, api_key, model):
     headers = {"Content-Type": "application/json"}
     payload = { "contents": [{ "parts": [{"text": prompt}] }] }
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
     
-    # LISTA DE TENTATIVAS (Do mais rápido para o mais compatível)
-    candidates = [
-        "gemini-1.5-flash",       # Mais rápido
-        "gemini-1.5-pro",         # Mais inteligente
-        "gemini-1.0-pro",         # Clássico
-        "gemini-pro"              # Legado
-    ]
-
-    last_error = ""
-    print(f"🔄 Processando IA...")
-
-    for model_name in candidates:
-        # Tenta endpoint v1 (Produção)
-        url = f"https://generativelanguage.googleapis.com/v1/models/{model_name}:generateContent?key={api_key}"
-        
-        try:
-            response = requests.post(url, headers=headers, json=payload, timeout=15)
-            
-            if response.status_code == 200:
-                print(f"✅ SUCESSO! Modelo usado: {model_name}")
-                return response
-            
-            # Se der erro 404 no v1, tenta v1beta (Fallback)
-            if response.status_code == 404:
-                url_beta = url.replace("/v1/", "/v1beta/")
-                response_beta = requests.post(url_beta, headers=headers, json=payload, timeout=15)
-                if response_beta.status_code == 200:
-                    print(f"✅ SUCESSO! Modelo usado (Beta): {model_name}")
-                    return response_beta
-            
-            last_error = response.text
-                
-        except Exception as e:
-            print(f"⚠️ Erro rede ({model_name}): {e}")
-            continue
-
-    print("❌ ERRO: Nenhum modelo funcionou. Ativando resposta de emergência.")
-    raise Exception(f"Google API Falhou: {last_error}")
-
-# =====================================================
-# 4. ROTAS
-# =====================================================
-@app.get("/health")
-async def health_check():
-    return {"status": "ok", "mode": "lifespan-fallback"}
+    response = requests.post(url, headers=headers, json=payload, timeout=20)
+    if response.status_code == 200: return response.json()
+    raise Exception(f"Erro {response.status_code}")
 
 @app.post("/explain") 
 async def explain_law(request: ExplainRequest):
-    print(f"📥 [REQ] Explicar: {request.user_interest}")
+    print(f"📥 [REQ] Tema: {request.user_interest}")
     
-    # --- CAMADA DE SEGURANÇA (FALLBACK) ---
-    # Se a chave não existir ou a API der erro, usamos essa resposta padrão
-    # para o Frontend não quebrar na apresentação.
-    fallback_text = (
+    # Texto de emergência (Mock)
+    fallback = (
         f"Olha só, imagina que essa lei funciona igualzinho a {request.user_interest}. "
-        f"No {request.user_interest}, você tem regras pra tudo funcionar bem, certo? "
-        "Essa lei faz a mesma coisa, organizando a bagunça pra proteger o cidadão. "
-        "No fim das contas, é pra garantir que ninguém saia perdendo no jogo!"
+        "Tem regras pra tudo funcionar bem e proteger quem participa. "
+        "No final, é pra garantir que o jogo seja justo pra todo mundo!"
     )
 
-    try:
-        if not API_KEY:
-            raise Exception("Sem chave")
+    if not API_KEY: return { "explanation": fallback }
 
+    try:
         prompt = f"""
-        ATUE COMO LOCUTOR.
+        ATUE COMO LOCUTOR POPULAR.
         Explicar lei: "{request.pl_text}"
         Analogia: "{request.user_interest}"
-        Texto curto falado (max 3 parágrafos).
+        Texto curto (max 3 parágrafos).
         RETORNE APENAS JSON: {{ "explanation": "texto..." }}
         """
-
-        response = call_gemini_api_direct(prompt, API_KEY)
-        data = response.json()
         
+        data = call_gemini(prompt, API_KEY, ACTIVE_MODEL)
         try:
-            # Tenta extrair o texto da IA
-            texto_bruto = data['candidates'][0]['content']['parts'][0]['text']
-            texto_limpo = re.sub(r"```json|```", "", texto_bruto).strip()
-            
-            try:
-                return json.loads(texto_limpo)
-            except:
-                return { "explanation": texto_limpo }
+            text = data['candidates'][0]['content']['parts'][0]['text']
+            clean_text = re.sub(r"```json|```", "", text).strip()
+            try: return json.loads(clean_text)
+            except: return { "explanation": clean_text }
         except:
-            print(f"❌ Erro parsing JSON da IA. Usando fallback.")
-            return { "explanation": fallback_text }
-
+            return { "explanation": fallback }
+            
     except Exception as e:
-        print(f"⚠️ [MODO EMERGÊNCIA ATIVADO]: API falhou ({str(e)}), enviando resposta simulada.")
-        # AQUI ESTÁ O SEGREDO: Em vez de erro 500, devolvemos sucesso simulado (200 OK).
-        return { "explanation": fallback_text }
+        print(f"⚠️ Falha na API: {e}")
+        return { "explanation": fallback }
 
 @app.post("/send_feedback")
-async def send_email_simulation(feedback: FeedbackRequest):
-    print(f"📧 Feedback simulado para {feedback.author_name}")
-    return { "status": "success", "message": "Feedback registrado!" }
+async def send_email(feedback: FeedbackRequest):
+    print(f"📧 Feedback: {feedback.author_name}")
+    return { "status": "success" }
+
+@app.get("/health")
+async def health():
+    return {"status": "ok", "structure": "api_folder"}
 
 # =====================================================
-# 5. SERVIR LOCAL
+# 5. SERVIR ARQUIVOS ESTÁTICOS (LOCALHOST APENAS)
 # =====================================================
-app.mount("/", StaticFiles(directory=".", html=True), name="static")
+# O Vercel serve os estáticos sozinho. Isso aqui é só para quando você roda no PC.
+if os.path.exists(os.path.join(root_dir, "index.html")):
+    app.mount("/", StaticFiles(directory=root_dir, html=True), name="static")
 
+# Bloco de execução local
 if __name__ == "__main__":
-    print("🚀 Iniciando servidor (Modo Hackathon)...")
-    print("👉 Acesse: http://localhost:8000")
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    print(f"🚀 Rodando localmente na porta 8000...")
+    # Importante: recarrega apenas se mudar arquivos na api ou raiz
+    uvicorn.run("index:app", host="0.0.0.0", port=8000, reload=True, reload_dirs=[root_dir])
