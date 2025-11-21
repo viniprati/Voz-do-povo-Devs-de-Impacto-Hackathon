@@ -158,7 +158,7 @@ async def explain_law(request: ExplainRequest):
 
     except Exception as e:
         print(f"⚠️ [MODO EMERGÊNCIA ATIVADO]: API falhou ({str(e)}), enviando resposta simulada.")
-        # AQUI ESTÁ O SEGREDO: Em vez de erro 500, devolvemos sucesso simulado.
+        # AQUI ESTÁ O SEGREDO: Em vez de erro 500, devolvemos sucesso simulado (200 OK).
         return { "explanation": fallback_text }
 
 @app.post("/send_feedback")

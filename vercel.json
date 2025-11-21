@@ -1,14 +1,15 @@
 {
   "builds": [
     {
-      "src": "main.py",
+      "src": "api/index.py",
       "use": "@vercel/python"
     }
   ],
   "rewrites": [
-    { "source": "/explain", "destination": "/main.py" },
-    { "source": "/send_feedback", "destination": "/main.py" },
-    { "source": "/docs", "destination": "/main.py" },
-    { "source": "/openapi.json", "destination": "/main.py" }
+    { "source": "/explain", "destination": "/api/index.py" },
+    { "source": "/send_feedback", "destination": "/api/index.py" },
+    { "source": "/health", "destination": "/api/index.py" },
+    { "source": "/docs", "destination": "/api/index.py" },
+    { "source": "/openapi.json", "destination": "/api/index.py" }
   ]
 }
