@@ -12,13 +12,11 @@ import re
 from contextlib import asynccontextmanager
 
 # =====================================================
-# 1. AJUSTE DE CAMINHOS (CRUCIAL PARA NOVA ESTRUTURA)
+# 1. AJUSTE DE CAMINHOS
 # =====================================================
-# Descobre onde está a raiz do projeto (uma pasta acima da 'api')
 current_dir = os.path.dirname(os.path.abspath(__file__))
 root_dir = os.path.dirname(current_dir)
 
-# Tenta carregar .env da raiz
 try:
     load_dotenv(os.path.join(root_dir, ".env"))
 except:
@@ -28,40 +26,48 @@ API_KEY = os.getenv("GOOGLE_API_KEY")
 ACTIVE_MODEL = None
 
 # =====================================================
-# 2. AUTO-CONFIGURAÇÃO (COM PROTEÇÃO ANTI-429)
+# 2. SELEÇÃO DE MODELO (COM TRAVA DE SEGURANÇA)
 # =====================================================
-def find_best_model(api_key):
+def find_safe_model(api_key):
     """
-    Descobre qual modelo a chave aceita para evitar erro 404.
-    Se der erro 429 (Muitos pedidos), usa o padrão sem travar.
+    Verifica se a chave funciona, mas força o uso do 1.5-flash.
+    IGNORA modelos 'preview' ou '2.5' que tem cota zero.
     """
-    print("🔍 Buscando modelos disponíveis...")
+    print("🔍 Validando chave e escolhendo modelo seguro...")
     url = f"https://generativelanguage.googleapis.com/v1beta/models?key={api_key}"
     try:
-        # Timeout curto (5s) para não atrasar a inicialização
         response = requests.get(url, timeout=5)
         
-        # SE DER ERRO 429 (Limite atingido), NÃO QUEBRA O SERVIDOR
-        if response.status_code == 429:
-            print("⚠️ Limite de teste atingido (429). Usando padrão seguro: gemini-1.5-flash")
+        if response.status_code != 200:
+            print(f"⚠️ Aviso: Não foi possível listar modelos. Usando padrão.")
             return "gemini-1.5-flash"
 
         data = response.json()
-        if "error" in data: 
-            print(f"⚠️ Erro na busca: {data['error'].get('message')}")
+        available = [m['name'].replace("models/", "") for m in data.get('models', [])]
+        
+        # --- AQUI ESTÁ A CORREÇÃO ---
+        # Não pegamos mais o "primeiro que aparecer".
+        # Procuramos explicitamente pelo modelo GRATUITO E ESTÁVEL.
+        
+        if "gemini-1.5-flash" in available:
+            print("✅ MODELO SELECIONADO: gemini-1.5-flash (Estável)")
             return "gemini-1.5-flash"
-        
-        # Procura Flash ou Pro na lista oficial
-        for model in data.get('models', []):
-            if "generateContent" in model.get('supportedGenerationMethods', []):
-                name = model['name'].replace("models/", "")
-                if "flash" in name or "pro" in name:
-                    print(f"✅ MODELO SELECIONADO: {name}")
-                    return name
-        
+            
+        if "gemini-1.5-flash-latest" in available:
+            print("✅ MODELO SELECIONADO: gemini-1.5-flash-latest")
+            return "gemini-1.5-flash-latest"
+
+        # Se não achar o flash, tenta o 1.0 Pro (o 1.5 Pro as vezes limita)
+        if "gemini-1.0-pro" in available:
+             print("✅ MODELO SELECIONADO: gemini-1.0-pro")
+             return "gemini-1.0-pro"
+             
+        # Retorno de segurança máximo
+        print("⚠️ Modelo exato não listado, forçando gemini-1.5-flash")
         return "gemini-1.5-flash"
+
     except Exception as e:
-        print(f"⚠️ Erro de conexão no teste ({e}). Usando padrão.")
+        print(f"⚠️ Erro na verificação ({e}). Usando padrão.")
         return "gemini-1.5-flash"
 
 # =====================================================
@@ -73,16 +79,14 @@ async def lifespan(app: FastAPI):
     print("✅ SERVIDOR ONLINE (Estrutura /api).")
     if API_KEY:
         print(f"🔑 Chave detectada: ...{API_KEY[-4:]}")
-        # Se der erro 429 aqui, ele recupera e usa o padrão
-        ACTIVE_MODEL = find_best_model(API_KEY)
-        if not ACTIVE_MODEL: ACTIVE_MODEL = "gemini-1.5-flash"
+        ACTIVE_MODEL = find_safe_model(API_KEY)
     else:
         print("⚠️ SEM CHAVE: Modo Simulação Ativo.")
     yield
 
 app = FastAPI(
     title="Voz do Povo API",
-    docs_url="/api/docs", # Ajuste para documentação funcionar na subpasta
+    docs_url="/api/docs",
     openapi_url="/api/openapi.json",
     lifespan=lifespan
 )
@@ -107,13 +111,17 @@ class FeedbackRequest(BaseModel):
     reason: str
 
 # =====================================================
-# 4. LÓGICA DA IA (COM FALLBACK BLINDADO)
+# 4. CONEXÃO E FALLBACK
 # =====================================================
 def call_gemini(prompt, api_key, model):
     headers = {"Content-Type": "application/json"}
     payload = { "contents": [{ "parts": [{"text": prompt}] }] }
     
-    # URL dinâmica baseada no modelo encontrado
+    # SEGURANÇA FINAL: Se por acaso o modelo for o 2.5, troca na hora.
+    if "2.5" in model or "preview" in model or "exp" in model:
+        print(f"⚠️ Bloqueando uso do modelo instável ({model}). Trocando para Flash.")
+        model = "gemini-1.5-flash"
+
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
     
     response = requests.post(url, headers=headers, json=payload, timeout=15)
@@ -121,15 +129,13 @@ def call_gemini(prompt, api_key, model):
     if response.status_code == 200: 
         return response.json()
     
-    # Se der erro, lança Exception com o código para o Mock assumir
     raise Exception(f"Erro Google {response.status_code}: {response.text}")
 
 @app.post("/explain") 
 async def explain_law(request: ExplainRequest):
     print(f"📥 [REQ] Tema: {request.user_interest}")
     
-    # --- MOCK DE SEGURANÇA (PLANO B) ---
-    # Garante que a apresentação funcione mesmo se o Google bloquear a chave
+    # MOCK (Para não travar apresentação)
     fallback = (
         f"Olha só, imagina que essa lei funciona igualzinho a {request.user_interest}. "
         "Basicamente, ela cria regras pra organizar a casa e garantir que ninguém saia perdendo. "
@@ -147,7 +153,7 @@ async def explain_law(request: ExplainRequest):
         RETORNE APENAS JSON: {{ "explanation": "texto..." }}
         """
         
-        data = call_gemini(prompt, API_KEY, ACTIVE_MODEL)
+        data = call_gemini(prompt, API_KEY, ACTIVE_MODEL or "gemini-1.5-flash")
         try:
             text = data['candidates'][0]['content']['parts'][0]['text']
             clean_text = re.sub(r"```json|```", "", text).strip()
@@ -157,8 +163,7 @@ async def explain_law(request: ExplainRequest):
             return { "explanation": fallback }
             
     except Exception as e:
-        print(f"⚠️ Falha na API ({str(e)}). Usando Mock.")
-        # Retorna o Mock para o Frontend receber 200 OK
+        print(f"⚠️ Falha API ({str(e)}). Usando Mock.")
         return { "explanation": fallback }
 
 @app.post("/send_feedback")
@@ -168,16 +173,14 @@ async def send_email(feedback: FeedbackRequest):
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "structure": "api_folder"}
+    return {"status": "ok"}
 
 # =====================================================
-# 5. SERVIR ARQUIVOS ESTÁTICOS (LOCALHOST APENAS)
+# 5. LOCALHOST
 # =====================================================
 if os.path.exists(os.path.join(root_dir, "index.html")):
     app.mount("/", StaticFiles(directory=root_dir, html=True), name="static")
 
-# Bloco de execução local
 if __name__ == "__main__":
-    print(f"🚀 Rodando localmente na porta 8000...")
-    # reload_dirs faz reiniciar se mexer na pasta raiz
+    print(f"🚀 Rodando localmente...")
     uvicorn.run("index:app", host="0.0.0.0", port=8000, reload=True, reload_dirs=[root_dir])
