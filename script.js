@@ -272,7 +272,11 @@ async function getAIExplanation() {
         alert("Erro ao conectar com a IA.");
     }
 }
-
+// FUNÇÃO PARA ABRIR O SITE DE OBRAS
+function openObrasSite() {
+    // Abre em nova aba
+    window.open("https://obrasorg.vercel.app/", "_blank");
+}
 // INICIALIZAÇÃO
 document.addEventListener('DOMContentLoaded', () => {
     navigateTo('home');

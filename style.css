@@ -204,6 +204,79 @@ body {
 .tag-badge.shop { background: var(--tag-shop-bg); color: var(--tag-shop-text); }
 
 /* =========================================
+   CARD DE OBRAS (NOVO)
+   ========================================= */
+.monitor-card {
+    background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%); /* Laranja Obras */
+    color: white;
+    padding: 20px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(245, 124, 0, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efeito de brilho ao passar o mouse */
+.monitor-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(245, 124, 0, 0.4);
+}
+
+.monitor-icon {
+    background: rgba(255, 255, 255, 0.2);
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.monitor-info {
+    flex: 1;
+}
+
+.monitor-info h3 {
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+    font-weight: 700;
+    color: white; /* Força branco */
+}
+
+.monitor-info p {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    line-height: 1.3;
+    margin: 0;
+    color: white;
+}
+
+.monitor-action {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 8px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+/* Ajuste para Mobile muito pequeno */
+@media (max-width: 380px) {
+    .monitor-action span { display: none; } /* Esconde o texto "Acessar" em telas minusculas */
+}
+
+/* =========================================
    4. DETALHES & INPUT
    ========================================= */
 .nav-back {
