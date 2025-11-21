@@ -2,7 +2,7 @@ import os
 import sys
 import uvicorn
 import requests
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -12,11 +12,10 @@ import re
 from contextlib import asynccontextmanager
 
 # =====================================================
-# 1. AJUSTE DE CAMINHOS
+# 1. SETUP
 # =====================================================
 current_dir = os.path.dirname(os.path.abspath(__file__))
 root_dir = os.path.dirname(current_dir)
-
 try:
     load_dotenv(os.path.join(root_dir, ".env"))
 except:
@@ -26,42 +25,43 @@ API_KEY = os.getenv("GOOGLE_API_KEY")
 ACTIVE_MODEL = None
 
 # =====================================================
-# 2. SELEÇÃO DE MODELO (MODO CLÁSSICO / UNIVERSAL)
+# 2. SELEÇÃO INTELIGENTE (PEGA O QUE TIVER)
 # =====================================================
-def find_safe_model(api_key):
-    print("🔍 Buscando modelo compatível...")
+def pick_any_working_model(api_key):
+    print("🔍 Baixando lista de modelos da sua conta...")
     url = f"https://generativelanguage.googleapis.com/v1beta/models?key={api_key}"
     try:
-        response = requests.get(url, timeout=5)
-        if response.status_code != 200:
-            # Se falhar a busca, vamos no CLÁSSICO que nunca falha
-            print("⚠️ Falha na busca. Usando fallback: gemini-pro")
-            return "gemini-pro"
-
+        response = requests.get(url, timeout=10)
         data = response.json()
-        available = [m['name'].replace("models/", "") for m in data.get('models', [])]
         
-        # 1. Tenta o Flash (Rápido)
-        if "gemini-1.5-flash" in available:
-            print("✅ SELECIONADO: gemini-1.5-flash")
-            return "gemini-1.5-flash"
+        if "models" not in data:
+            print("⚠️ Lista vazia. Usando fallback seguro.")
+            return "gemini-1.5-flash-8b"
 
-        # 2. Tenta o 1.0 Pro (Universal)
-        if "gemini-1.0-pro" in available:
-            print("✅ SELECIONADO: gemini-1.0-pro")
-            return "gemini-1.0-pro"
+        # Lista todos os modelos encontrados no console para a gente ver
+        all_models = [m['name'].replace("models/", "") for m in data['models']]
+        print(f"📋 MODELOS DISPONÍVEIS NA SUA CONTA: {all_models}")
+
+        # FILTRO: Pega o primeiro que gere texto e não seja o 2.5 (que tem cota zero)
+        for m in data['models']:
+            name = m['name'].replace("models/", "")
+            methods = m.get('supportedGenerationMethods', [])
             
-        # 3. Tenta o Pro Clássico (Legado)
-        if "gemini-pro" in available:
-            print("✅ SELECIONADO: gemini-pro")
-            return "gemini-pro"
+            if "generateContent" in methods:
+                # Pula modelos experimentais que travam conta grátis
+                if "2.5" in name or "preview" in name or "exp" in name:
+                    continue
+                
+                # ACHOU UM BOM!
+                print(f"✅ ESCOLHIDO AUTOMATICAMENTE: {name}")
+                return name
 
-        # Se só tiver os experimentais quebrados, força o pro
-        print("⚠️ Nenhum modelo padrão listado. Forçando gemini-pro.")
-        return "gemini-pro"
+        # Se não sobrou nada, tenta o 8b que é o mais leve de todos
+        return "gemini-1.5-flash-8b"
 
-    except:
-        return "gemini-pro"
+    except Exception as e:
+        print(f"⚠️ Erro na seleção: {e}")
+        return "gemini-1.5-flash-8b"
 
 # =====================================================
 # 3. INICIALIZAÇÃO
@@ -72,17 +72,12 @@ async def lifespan(app: FastAPI):
     print("✅ SERVIDOR ONLINE.")
     if API_KEY:
         print(f"🔑 Chave: ...{API_KEY[-4:]}")
-        ACTIVE_MODEL = find_safe_model(API_KEY)
+        ACTIVE_MODEL = pick_any_working_model(API_KEY)
     else:
         print("⚠️ SEM CHAVE.")
     yield
 
-app = FastAPI(
-    title="Voz do Povo API",
-    docs_url="/api/docs",
-    openapi_url="/api/openapi.json",
-    lifespan=lifespan
-)
+app = FastAPI(title="Voz do Povo API", docs_url="/api/docs", openapi_url="/api/openapi.json", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -104,17 +99,13 @@ class FeedbackRequest(BaseModel):
     reason: str
 
 # =====================================================
-# 4. CONEXÃO
+# 4. CHAMADA API
 # =====================================================
 def call_gemini(prompt, api_key, model):
     headers = {"Content-Type": "application/json"}
     payload = { "contents": [{ "parts": [{"text": prompt}] }] }
     
-    # Proteção contra modelos quebrados
-    if "exp" in model or "preview" in model or "2.5" in model:
-        print(f"⚠️ Modelo {model} instável detectado. Trocando para gemini-pro.")
-        model = "gemini-pro"
-
+    # Usa o modelo que escolhemos dinamicamente
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
     
     response = requests.post(url, headers=headers, json=payload, timeout=15)
@@ -145,9 +136,9 @@ async def explain_law(request: ExplainRequest):
         RETORNE APENAS JSON: {{ "explanation": "texto..." }}
         """
         
-        # Usa o modelo ativo OU o clássico como garantia
-        model_to_use = ACTIVE_MODEL if ACTIVE_MODEL else "gemini-pro"
-        data = call_gemini(prompt, API_KEY, model_to_use)
+        # Usa o modelo descoberto ou o 8b como fallback
+        model_final = ACTIVE_MODEL if ACTIVE_MODEL else "gemini-1.5-flash-8b"
+        data = call_gemini(prompt, API_KEY, model_final)
         
         try:
             text = data['candidates'][0]['content']['parts'][0]['text']
