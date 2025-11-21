@@ -1,16 +1,16 @@
 /* ==========================================================================
-   SCRIPT.JS - Lógica do Frontend "Voz do Povo" (Produção Vercel)
+   SCRIPT.JS - Lógica do Frontend "Voz do Povo"
    ========================================================================== */
 
-// Deixe vazio para usar o caminho relativo no Vercel
-const API_URL = ""; 
+const API_URL = ""; // Vercel usa caminho relativo
 
 let currentPL = null;
 let synth = window.speechSynthesis;
 let utterance = null;
-let currentVoteType = null; // Guarda se foi 'Concordo' ou 'Discordo'
+let currentVoteType = null;
+let currentTextToSpeak = ""; // Guarda o texto atual para quando mudar a velocidade
 
-// 1. DADOS COM E-MAILS DOS DEPUTADOS
+// 1. DADOS DOS PROJETOS DE LEI
 const PL_DATA = [
     { 
         id: 1, 
@@ -71,7 +71,7 @@ function simulateGPS() {
     }
 }
 
-// 4. NAVEGAÇÃO
+// 4. NAVEGAÇÃO ENTRE TELAS
 function navigateTo(viewName) {
     stopAudio();
     document.querySelectorAll('.view').forEach(el => {
@@ -104,7 +104,15 @@ function selectPL(id) {
     navigateTo('details');
 }
 
-// 6. ÁUDIO
+// 6. LÓGICA DE ÁUDIO (ATUALIZADA)
+function changeSpeed() {
+    if (synth.speaking) {
+        stopAudio();
+        // Pequeno delay para evitar conflito de áudio
+        setTimeout(() => speak(currentTextToSpeak), 50);
+    }
+}
+
 function toggleAudio() {
     if (synth.speaking) {
         if (synth.paused) {
@@ -123,16 +131,38 @@ function toggleAudio() {
 function stopAudio() {
     synth.cancel();
     updatePlayButton(false);
+    const progressBar = document.getElementById('speech-progress');
+    if(progressBar) progressBar.value = 0;
 }
 
 function speak(text) {
-    synth.cancel();
+    synth.cancel(); // Para qualquer áudio anterior
+
+    currentTextToSpeak = text;
     utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'pt-BR';
-    utterance.rate = 1.1;
+    
+    // Pega a velocidade selecionada
+    const speedSelect = document.getElementById('speed-select');
+    utterance.rate = speedSelect ? parseFloat(speedSelect.value) : 1.0;
+
+    const progressBar = document.getElementById('speech-progress');
+
+    // Atualiza a barrinha enquanto fala
+    utterance.onboundary = function(event) {
+        const percentage = (event.charIndex / text.length) * 100;
+        if(progressBar) progressBar.value = percentage;
+    };
+
     utterance.onstart = () => updatePlayButton(true);
-    utterance.onend = () => updatePlayButton(false);
+    
+    utterance.onend = () => {
+        updatePlayButton(false);
+        if(progressBar) progressBar.value = 100;
+    };
+
     utterance.onerror = () => updatePlayButton(false);
+    
     synth.speak(utterance);
 }
 
@@ -156,14 +186,12 @@ function vote(type) {
     tagsContainer.scrollIntoView({ behavior: 'smooth' });
 }
 
-// Envia o motivo escolhido
 async function submitReason(reason) {
     if (!currentVoteType || !currentPL) return;
 
     alert(`📨 Enviando e-mail para: ${currentPL.author}...`);
 
     try {
-        // Caminho relativo para o Backend (sem /api pois estamos na raiz)
         const response = await fetch('/send_feedback', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -187,7 +215,7 @@ async function submitReason(reason) {
     }
 }
 
-// 8. IA (BACKEND)
+// 8. CONEXÃO COM IA (BACKEND)
 async function getAIExplanation() {
     const userInterest = document.getElementById('user-interest').value.trim();
     
@@ -204,6 +232,8 @@ async function getAIExplanation() {
     const voteSection = document.getElementById('vote-section');
 
     stopAudio();
+    
+    // Reseta UI
     resultBox.classList.remove('hidden');
     loader.classList.remove('hidden');
     audioCard.classList.add('hidden');
@@ -211,7 +241,6 @@ async function getAIExplanation() {
     voteSection.classList.add('hidden');
 
     try {
-        // Caminho relativo para o Vercel (sem /api pois estamos na raiz)
         const response = await fetch('/explain', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -224,7 +253,11 @@ async function getAIExplanation() {
         if (!response.ok) throw new Error('Erro no servidor');
 
         let data = await response.json();
-        if (typeof data === 'string') { try { data = JSON.parse(data); } catch(e) { data = {explanation: data}; } }
+        // Garante que data é um objeto
+        if (typeof data === 'string') { 
+            try { data = JSON.parse(data); } 
+            catch(e) { data = {explanation: data}; } 
+        }
 
         textOutput.innerText = data.explanation;
 

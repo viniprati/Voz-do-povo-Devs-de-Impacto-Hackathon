@@ -123,18 +123,36 @@
                         <i class="fa-solid fa-spinner fa-spin"></i> Traduzindo para o povo...
                     </div>
 
-                    <!-- 1. CARD DE ÁUDIO -->
-                    <div id="audio-card" class="audio-player-card hidden">
-                        <div class="audio-icon">
+                    <!-- 1. CARD DE ÁUDIO (ATUALIZADO COM CONTROLES) -->
+                    <div id="audio-card" class="audio-card hidden">
+                        <div class="audio-header">
                             <i class="fa-solid fa-headphones"></i>
+                            <span>ÁUDIO GERADO POR IA</span>
                         </div>
-                        <div class="audio-controls">
-                            <p class="audio-label">Áudio Gerado por IA</p>
-                            <div class="control-buttons">
-                                <button onclick="toggleAudio()" id="play-pause-btn" class="btn-play">
+                        
+                        <div class="audio-controls-wrapper">
+                            <!-- Barrinha de Progresso -->
+                            <div class="progress-container">
+                                <input type="range" id="speech-progress" value="0" max="100" step="1" disabled>
+                            </div>
+                    
+                            <div class="buttons-row">
+                                <!-- Controle de Velocidade -->
+                                <select id="speed-select" onchange="changeSpeed()">
+                                    <option value="0.75">0.75x</option>
+                                    <option value="1" selected>1.0x</option>
+                                    <option value="1.25">1.25x</option>
+                                    <option value="1.5">1.5x</option>
+                                    <option value="2">2.0x</option>
+                                </select>
+                    
+                                <!-- Botão Play/Pause -->
+                                <button id="play-pause-btn" onclick="toggleAudio()">
                                     <i class="fa-solid fa-play"></i> Ouvir Agora
                                 </button>
-                                <button onclick="stopAudio()" class="btn-stop">
+                    
+                                <!-- Botão Parar -->
+                                <button class="stop-btn" onclick="stopAudio()">
                                     <i class="fa-solid fa-stop"></i>
                                 </button>
                             </div>
@@ -162,10 +180,10 @@
                         <!-- Tags de Motivo (Aparecem ao votar) -->
                         <div id="tags-container" class="tags-cloud hidden">
                             <p>Por qual motivo?</p>
-                            <button>Ajuda o Pobre</button>
-                            <button>É Justo</button>
-                            <button>Prejudica meu bolso</button>
-                            <button>Não entendi</button>
+                            <button onclick="submitReason('Ajuda o Pobre')">Ajuda o Pobre</button>
+                            <button onclick="submitReason('É Justo')">É Justo</button>
+                            <button onclick="submitReason('Prejudica meu bolso')">Prejudica meu bolso</button>
+                            <button onclick="submitReason('Não entendi')">Não entendi</button>
                         </div>
                     </div>
 

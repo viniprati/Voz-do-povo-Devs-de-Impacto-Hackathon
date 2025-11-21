@@ -265,38 +265,92 @@ body {
 .input-group button:hover { background: var(--primary-dark); }
 
 /* =========================================
-   5. PLAYER DE ÁUDIO
+   5. PLAYER DE ÁUDIO (CORRIGIDO)
    ========================================= */
-.audio-player-card {
-    background: linear-gradient(135deg, #6200ea 0%, #7c4dff 100%);
+.audio-card {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #7c4dff 100%);
     color: white;
     padding: 20px;
     border-radius: 20px;
     margin: 25px 0 20px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
     box-shadow: 0 10px 20px rgba(98, 0, 234, 0.25);
     animation: slideUp 0.5s;
+    
+    /* Layout Flexível Vertical */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
-.audio-icon {
-    width: 50px;
-    height: 50px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 50%;
+.audio-header {
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
+    gap: 10px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.9;
+    font-weight: 700;
 }
 
-.audio-controls { flex: 1; }
-.audio-label { font-size: 0.75rem; opacity: 0.9; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; }
+.audio-controls-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
 
-.control-buttons { display: flex; gap: 10px; }
+/* Barrinha de Progresso */
+.progress-container { width: 100%; }
 
-.btn-play {
+#speech-progress {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.3); /* Fundo semi-transparente */
+    border-radius: 5px;
+    outline: none;
+    -webkit-appearance: none;
+    cursor: default;
+}
+
+#speech-progress::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: default;
+    box-shadow: 0 0 10px rgba(255,255,255,0.8);
+}
+
+/* Linha de Botões */
+.buttons-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+/* Seletor de Velocidade */
+#speed-select {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+}
+
+#speed-select option {
+    background: #333;
+    color: white;
+}
+
+/* Botão Play Principal */
+#play-pause-btn {
     flex: 1;
     background: white;
     color: var(--primary-color);
@@ -312,11 +366,19 @@ body {
     gap: 8px;
     transition: transform 0.1s;
 }
-.btn-play:active { transform: scale(0.95); }
-.btn-play.playing { background: #ffeb3b; color: black; }
 
-.btn-stop {
+#play-pause-btn:active { transform: scale(0.95); }
+
+/* Estilo quando está tocando */
+#play-pause-btn.playing { 
+    background: #ffeb3b; 
+    color: black; 
+}
+
+/* Botão Stop */
+.stop-btn {
     width: 40px;
+    height: 40px;
     background: rgba(255,255,255,0.2);
     color: white;
     border: none;
@@ -325,8 +387,10 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1rem;
+    transition: background 0.2s;
 }
-.btn-stop:hover { background: rgba(255,255,255,0.4); }
+.stop-btn:hover { background: rgba(255,255,255,0.4); }
 
 /* Texto Transcrição */
 #explanation-content {
@@ -457,4 +521,41 @@ body {
 @media (min-width: 768px) {
     .main-header, #app-container { max-width: 800px; }
     .cards-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+}
+
+/* =========================================
+   8. NAVEGAÇÃO MOBILE
+   ========================================= */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: var(--bg-card);
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    border-top: 1px solid var(--border-color);
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    z-index: 100;
+}
+
+.nav-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    flex: 1;
+}
+
+.nav-btn i { font-size: 1.4rem; margin-bottom: 2px; }
+
+.nav-btn.active {
+    color: var(--primary-color);
+    font-weight: 600;
 }
