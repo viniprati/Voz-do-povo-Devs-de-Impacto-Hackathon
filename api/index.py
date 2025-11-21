@@ -25,7 +25,7 @@ API_KEY = os.getenv("GOOGLE_API_KEY")
 ACTIVE_MODEL = None
 
 # =====================================================
-# 2. SELEÇÃO INTELIGENTE (PEGA O QUE TIVER)
+# 2. SELEÇÃO INTELIGENTE (PRIORIDADE: FLASH LATEST)
 # =====================================================
 def pick_any_working_model(api_key):
     print("🔍 Baixando lista de modelos da sua conta...")
@@ -35,33 +35,40 @@ def pick_any_working_model(api_key):
         data = response.json()
         
         if "models" not in data:
-            print("⚠️ Lista vazia. Usando fallback seguro.")
-            return "gemini-1.5-flash-8b"
+            return "gemini-1.5-flash"
 
-        # Lista todos os modelos encontrados no console para a gente ver
+        # Lista limpa de nomes
         all_models = [m['name'].replace("models/", "") for m in data['models']]
-        print(f"📋 MODELOS DISPONÍVEIS NA SUA CONTA: {all_models}")
+        print(f"📋 SUA LISTA (Resumo): {all_models[:5]}...") # Mostra só os 5 primeiros
 
-        # FILTRO: Pega o primeiro que gere texto e não seja o 2.5 (que tem cota zero)
-        for m in data['models']:
-            name = m['name'].replace("models/", "")
-            methods = m.get('supportedGenerationMethods', [])
+        # === AQUI ESTÁ A REGRA DE OURO ===
+        # 1. Tenta o alias de produção (Mais estável de todos)
+        if "gemini-flash-latest" in all_models:
+            print("✅ ESCOLHIDO (GOLD): gemini-flash-latest")
+            return "gemini-flash-latest"
             
-            if "generateContent" in methods:
-                # Pula modelos experimentais que travam conta grátis
-                if "2.5" in name or "preview" in name or "exp" in name:
-                    continue
-                
-                # ACHOU UM BOM!
-                print(f"✅ ESCOLHIDO AUTOMATICAMENTE: {name}")
-                return name
+        # 2. Tenta o 1.5 Flash (O tanque de guerra)
+        if "gemini-1.5-flash" in all_models:
+            print("✅ ESCOLHIDO (SILVER): gemini-1.5-flash")
+            return "gemini-1.5-flash"
 
-        # Se não sobrou nada, tenta o 8b que é o mais leve de todos
-        return "gemini-1.5-flash-8b"
+        # 3. Tenta o 2.0 Flash (Novo, rápido)
+        if "gemini-2.0-flash" in all_models:
+             print("✅ ESCOLHIDO (BRONZE): gemini-2.0-flash")
+             return "gemini-2.0-flash"
+
+        # 4. Se não tiver nenhum desses, pega o primeiro que não seja 2.5 (Cota Zero)
+        for m in all_models:
+            if "2.5" not in m and "preview" not in m and "exp" not in m:
+                print(f"✅ ESCOLHIDO (FALLBACK): {m}")
+                return m
+
+        # Se tudo falhar, tenta o flash latest na sorte
+        return "gemini-flash-latest"
 
     except Exception as e:
         print(f"⚠️ Erro na seleção: {e}")
-        return "gemini-1.5-flash-8b"
+        return "gemini-1.5-flash"
 
 # =====================================================
 # 3. INICIALIZAÇÃO
@@ -105,10 +112,10 @@ def call_gemini(prompt, api_key, model):
     headers = {"Content-Type": "application/json"}
     payload = { "contents": [{ "parts": [{"text": prompt}] }] }
     
-    # Usa o modelo que escolhemos dinamicamente
+    # URL final
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
     
-    response = requests.post(url, headers=headers, json=payload, timeout=15)
+    response = requests.post(url, headers=headers, json=payload, timeout=20)
     
     if response.status_code == 200: 
         return response.json()
@@ -119,6 +126,7 @@ def call_gemini(prompt, api_key, model):
 async def explain_law(request: ExplainRequest):
     print(f"📥 [REQ] Tema: {request.user_interest}")
     
+    # MOCK DE APRESENTAÇÃO (Para não travar no palco)
     fallback = (
         f"Olha só, imagina que essa lei funciona igualzinho a {request.user_interest}. "
         "Basicamente, ela cria regras pra organizar a casa e garantir que ninguém saia perdendo. "
@@ -129,15 +137,14 @@ async def explain_law(request: ExplainRequest):
 
     try:
         prompt = f"""
-        ATUE COMO LOCUTOR POPULAR.
+        ATUE COMO LOCUTOR POPULAR BRASILEIRO.
         Explicar lei: "{request.pl_text}"
         Analogia: "{request.user_interest}"
         Texto curto falado (max 3 parágrafos).
         RETORNE APENAS JSON: {{ "explanation": "texto..." }}
         """
         
-        # Usa o modelo descoberto ou o 8b como fallback
-        model_final = ACTIVE_MODEL if ACTIVE_MODEL else "gemini-1.5-flash-8b"
+        model_final = ACTIVE_MODEL if ACTIVE_MODEL else "gemini-flash-latest"
         data = call_gemini(prompt, API_KEY, model_final)
         
         try:
