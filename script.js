@@ -163,7 +163,7 @@ async function submitReason(reason) {
     alert(`📨 Enviando e-mail para: ${currentPL.author}...`);
 
     try {
-        // Caminho relativo para o Backend
+        // Caminho relativo para o Backend (sem /api pois estamos na raiz)
         const response = await fetch('/send_feedback', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -211,7 +211,7 @@ async function getAIExplanation() {
     voteSection.classList.add('hidden');
 
     try {
-        // Caminho relativo para o Vercel
+        // Caminho relativo para o Vercel (sem /api pois estamos na raiz)
         const response = await fetch('/explain', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

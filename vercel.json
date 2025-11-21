@@ -1,4 +1,10 @@
 {
+  "builds": [
+    {
+      "src": "main.py",
+      "use": "@vercel/python"
+    }
+  ],
   "rewrites": [
     { "source": "/explain", "destination": "/main.py" },
     { "source": "/send_feedback", "destination": "/main.py" },
