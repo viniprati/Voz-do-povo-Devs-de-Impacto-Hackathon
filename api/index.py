@@ -26,49 +26,42 @@ API_KEY = os.getenv("GOOGLE_API_KEY")
 ACTIVE_MODEL = None
 
 # =====================================================
-# 2. SELEÇÃO DE MODELO (COM TRAVA DE SEGURANÇA)
+# 2. SELEÇÃO DE MODELO (MODO CLÁSSICO / UNIVERSAL)
 # =====================================================
 def find_safe_model(api_key):
-    """
-    Verifica se a chave funciona, mas força o uso do 1.5-flash.
-    IGNORA modelos 'preview' ou '2.5' que tem cota zero.
-    """
-    print("🔍 Validando chave e escolhendo modelo seguro...")
+    print("🔍 Buscando modelo compatível...")
     url = f"https://generativelanguage.googleapis.com/v1beta/models?key={api_key}"
     try:
         response = requests.get(url, timeout=5)
-        
         if response.status_code != 200:
-            print(f"⚠️ Aviso: Não foi possível listar modelos. Usando padrão.")
-            return "gemini-1.5-flash"
+            # Se falhar a busca, vamos no CLÁSSICO que nunca falha
+            print("⚠️ Falha na busca. Usando fallback: gemini-pro")
+            return "gemini-pro"
 
         data = response.json()
         available = [m['name'].replace("models/", "") for m in data.get('models', [])]
         
-        # --- AQUI ESTÁ A CORREÇÃO ---
-        # Não pegamos mais o "primeiro que aparecer".
-        # Procuramos explicitamente pelo modelo GRATUITO E ESTÁVEL.
-        
+        # 1. Tenta o Flash (Rápido)
         if "gemini-1.5-flash" in available:
-            print("✅ MODELO SELECIONADO: gemini-1.5-flash (Estável)")
+            print("✅ SELECIONADO: gemini-1.5-flash")
             return "gemini-1.5-flash"
-            
-        if "gemini-1.5-flash-latest" in available:
-            print("✅ MODELO SELECIONADO: gemini-1.5-flash-latest")
-            return "gemini-1.5-flash-latest"
 
-        # Se não achar o flash, tenta o 1.0 Pro (o 1.5 Pro as vezes limita)
+        # 2. Tenta o 1.0 Pro (Universal)
         if "gemini-1.0-pro" in available:
-             print("✅ MODELO SELECIONADO: gemini-1.0-pro")
-             return "gemini-1.0-pro"
-             
-        # Retorno de segurança máximo
-        print("⚠️ Modelo exato não listado, forçando gemini-1.5-flash")
-        return "gemini-1.5-flash"
+            print("✅ SELECIONADO: gemini-1.0-pro")
+            return "gemini-1.0-pro"
+            
+        # 3. Tenta o Pro Clássico (Legado)
+        if "gemini-pro" in available:
+            print("✅ SELECIONADO: gemini-pro")
+            return "gemini-pro"
 
-    except Exception as e:
-        print(f"⚠️ Erro na verificação ({e}). Usando padrão.")
-        return "gemini-1.5-flash"
+        # Se só tiver os experimentais quebrados, força o pro
+        print("⚠️ Nenhum modelo padrão listado. Forçando gemini-pro.")
+        return "gemini-pro"
+
+    except:
+        return "gemini-pro"
 
 # =====================================================
 # 3. INICIALIZAÇÃO
@@ -76,12 +69,12 @@ def find_safe_model(api_key):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global ACTIVE_MODEL
-    print("✅ SERVIDOR ONLINE (Estrutura /api).")
+    print("✅ SERVIDOR ONLINE.")
     if API_KEY:
-        print(f"🔑 Chave detectada: ...{API_KEY[-4:]}")
+        print(f"🔑 Chave: ...{API_KEY[-4:]}")
         ACTIVE_MODEL = find_safe_model(API_KEY)
     else:
-        print("⚠️ SEM CHAVE: Modo Simulação Ativo.")
+        print("⚠️ SEM CHAVE.")
     yield
 
 app = FastAPI(
@@ -111,16 +104,16 @@ class FeedbackRequest(BaseModel):
     reason: str
 
 # =====================================================
-# 4. CONEXÃO E FALLBACK
+# 4. CONEXÃO
 # =====================================================
 def call_gemini(prompt, api_key, model):
     headers = {"Content-Type": "application/json"}
     payload = { "contents": [{ "parts": [{"text": prompt}] }] }
     
-    # SEGURANÇA FINAL: Se por acaso o modelo for o 2.5, troca na hora.
-    if "2.5" in model or "preview" in model or "exp" in model:
-        print(f"⚠️ Bloqueando uso do modelo instável ({model}). Trocando para Flash.")
-        model = "gemini-1.5-flash"
+    # Proteção contra modelos quebrados
+    if "exp" in model or "preview" in model or "2.5" in model:
+        print(f"⚠️ Modelo {model} instável detectado. Trocando para gemini-pro.")
+        model = "gemini-pro"
 
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
     
@@ -129,13 +122,12 @@ def call_gemini(prompt, api_key, model):
     if response.status_code == 200: 
         return response.json()
     
-    raise Exception(f"Erro Google {response.status_code}: {response.text}")
+    raise Exception(f"Erro {response.status_code}: {response.text}")
 
 @app.post("/explain") 
 async def explain_law(request: ExplainRequest):
     print(f"📥 [REQ] Tema: {request.user_interest}")
     
-    # MOCK (Para não travar apresentação)
     fallback = (
         f"Olha só, imagina que essa lei funciona igualzinho a {request.user_interest}. "
         "Basicamente, ela cria regras pra organizar a casa e garantir que ninguém saia perdendo. "
@@ -153,7 +145,10 @@ async def explain_law(request: ExplainRequest):
         RETORNE APENAS JSON: {{ "explanation": "texto..." }}
         """
         
-        data = call_gemini(prompt, API_KEY, ACTIVE_MODEL or "gemini-1.5-flash")
+        # Usa o modelo ativo OU o clássico como garantia
+        model_to_use = ACTIVE_MODEL if ACTIVE_MODEL else "gemini-pro"
+        data = call_gemini(prompt, API_KEY, model_to_use)
+        
         try:
             text = data['candidates'][0]['content']['parts'][0]['text']
             clean_text = re.sub(r"```json|```", "", text).strip()
@@ -163,12 +158,11 @@ async def explain_law(request: ExplainRequest):
             return { "explanation": fallback }
             
     except Exception as e:
-        print(f"⚠️ Falha API ({str(e)}). Usando Mock.")
+        print(f"⚠️ Erro API ({e}). Usando Mock.")
         return { "explanation": fallback }
 
 @app.post("/send_feedback")
 async def send_email(feedback: FeedbackRequest):
-    print(f"📧 Feedback: {feedback.author_name}")
     return { "status": "success" }
 
 @app.get("/health")
