@@ -148,7 +148,7 @@ function updatePlayButton(isPlaying) {
     }
 }
 
-// 7. VOTAÇÃO E EMAIL (IMPORTANTE)
+// 7. VOTAÇÃO E EMAIL
 function vote(type) {
     currentVoteType = type === 'up' ? "Concordo" : "Discordo";
     const tagsContainer = document.getElementById('tags-container');
@@ -156,8 +156,7 @@ function vote(type) {
     tagsContainer.scrollIntoView({ behavior: 'smooth' });
 }
 
-// ATENÇÃO: Você precisa atualizar o HTML das tags para chamar essa função!
-// Ex no HTML: <button onclick="submitReason('É Justo')">É Justo</button>
+// Envia o motivo escolhido
 async function submitReason(reason) {
     if (!currentVoteType || !currentPL) return;
 
