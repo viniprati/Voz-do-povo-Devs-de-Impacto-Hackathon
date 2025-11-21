@@ -1,35 +1,44 @@
 /* ==========================================================================
-   SCRIPT.JS - Lógica do Frontend "Voz do Povo" (Completo)
+   SCRIPT.JS - Lógica do Frontend "Voz do Povo" (Produção Vercel)
    ========================================================================== */
 
-const API_URL = "";
-let currentPL = null;
-let synth = window.speechSynthesis; // API nativa de voz
-let utterance = null;
+// Deixe vazio para usar o caminho relativo no Vercel
+const API_URL = ""; 
 
-// 1. DADOS (MOCK DATABASE)
+let currentPL = null;
+let synth = window.speechSynthesis;
+let utterance = null;
+let currentVoteType = null; // Guarda se foi 'Concordo' ou 'Discordo'
+
+// 1. DADOS COM E-MAILS DOS DEPUTADOS
 const PL_DATA = [
     { 
         id: 1, 
         title: "PL 2630/2020 (Fake News)", 
         summary: "Regras para redes sociais e combate à desinformação.", 
-        fullText: "O projeto institui a Lei Brasileira de Liberdade, Responsabilidade e Transparência na Internet. Estabelece obrigações para provedores de redes sociais visando combater a desinformação (fake news) e contas robôs." 
+        fullText: "O projeto institui a Lei Brasileira de Liberdade, Responsabilidade e Transparência na Internet. Estabelece obrigações para provedores de redes sociais visando combater a desinformação (fake news) e contas robôs.",
+        author: "Dep. Orlando Silva",
+        email: "dep.orlandosilva@camara.leg.br"
     },
     { 
         id: 2, 
         title: "Reforma Tributária", 
         summary: "Mudança nos impostos do consumo (IVA) e Cashback.", 
-        fullText: "A proposta unifica cinco tributos (PIS, Cofins, IPI, ICMS e ISS) em uma cobrança única (IVA). Cria o Cashback para devolver impostos a famílias de baixa renda e o Imposto Seletivo para produtos nocivos." 
+        fullText: "A proposta unifica cinco tributos (PIS, Cofins, IPI, ICMS e ISS) em uma cobrança única (IVA). Cria o Cashback para devolver impostos a famílias de baixa renda e o Imposto Seletivo para produtos nocivos.",
+        author: "Dep. Aguinaldo Ribeiro",
+        email: "dep.aguinaldoribeiro@camara.leg.br"
     },
     { 
         id: 3, 
         title: "Taxação de Importações", 
         summary: "Imposto para compras internacionais (Shein/Shopee).", 
-        fullText: "Dispõe sobre o tratamento tributário nas importações. Compras até US$ 50 pagam apenas ICMS (17%). Acima de US$ 50, paga-se 60% de imposto federal mais o ICMS estadual." 
+        fullText: "Dispõe sobre o tratamento tributário nas importações. Compras até US$ 50 pagam apenas ICMS (17%). Acima de US$ 50, paga-se 60% de imposto federal mais o ICMS estadual.",
+        author: "Ministério da Fazenda",
+        email: "gabinete.ministro@fazenda.gov.br"
     }
 ];
 
-// 2. SISTEMA DE TEMA (DARK MODE)
+// 2. TEMA (DARK MODE)
 function toggleTheme() {
     document.body.classList.toggle('dark-mode');
     const icon = document.getElementById('theme-icon');
@@ -43,19 +52,17 @@ function toggleTheme() {
     }
 }
 
-// Verifica preferência salva ao carregar
 if (localStorage.getItem('theme') === 'dark') {
     document.body.classList.add('dark-mode');
     const icon = document.getElementById('theme-icon');
     if(icon) icon.classList.replace('fa-moon', 'fa-sun');
 }
 
-// 3. SIMULAÇÃO DE GPS (UX)
+// 3. SIMULAÇÃO GPS
 function simulateGPS() {
     const toast = document.getElementById('gps-toast');
     if (toast) {
         toast.classList.remove('hidden');
-        // Animação de saída após 4 segundos
         setTimeout(() => {
             toast.style.transition = "opacity 0.5s";
             toast.style.opacity = '0';
@@ -64,40 +71,31 @@ function simulateGPS() {
     }
 }
 
-// 4. NAVEGAÇÃO (SPA)
+// 4. NAVEGAÇÃO
 function navigateTo(viewName) {
-    stopAudio(); // Para o áudio ao mudar de tela
-    
-    // Esconde todas as telas
+    stopAudio();
     document.querySelectorAll('.view').forEach(el => {
         el.classList.add('hidden');
         el.classList.remove('active');
     });
-
-    // Mostra a tela alvo
     const targetView = document.getElementById(`view-${viewName}`);
     if (targetView) {
         targetView.classList.remove('hidden');
-        // Pequeno delay para animação CSS funcionar
         setTimeout(() => targetView.classList.add('active'), 10);
     }
-
-    // Scroll para o topo
     window.scrollTo(0, 0);
 }
 
-// 5. SELEÇÃO DO PROJETO DE LEI
+// 5. SELEÇÃO DO PL
 function selectPL(id) {
     const pl = PL_DATA.find(item => item.id === id);
     if (!pl) return;
 
     currentPL = pl;
 
-    // Preenche dados na tela de detalhes
     document.getElementById('pl-title-display').innerText = pl.title;
     document.getElementById('pl-summary-display').innerText = pl.summary;
 
-    // Reseta estados da tela de detalhes
     document.getElementById('ai-result').classList.add('hidden');
     document.getElementById('vote-section').classList.add('hidden');
     document.getElementById('tags-container').classList.add('hidden');
@@ -106,7 +104,7 @@ function selectPL(id) {
     navigateTo('details');
 }
 
-// 6. SISTEMA DE ÁUDIO
+// 6. ÁUDIO
 function toggleAudio() {
     if (synth.speaking) {
         if (synth.paused) {
@@ -117,7 +115,6 @@ function toggleAudio() {
             updatePlayButton(false);
         }
     } else {
-        // Começar a falar o texto gerado
         const text = document.getElementById('text-output').innerText;
         if (text) speak(text);
     }
@@ -129,25 +126,19 @@ function stopAudio() {
 }
 
 function speak(text) {
-    // Cancela qualquer fala anterior
     synth.cancel();
-
     utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'pt-BR'; // Voz em Português Brasil
-    utterance.rate = 1.1;     // Velocidade dinâmica
-    
-    // Eventos para controlar o ícone do botão
+    utterance.lang = 'pt-BR';
+    utterance.rate = 1.1;
     utterance.onstart = () => updatePlayButton(true);
     utterance.onend = () => updatePlayButton(false);
     utterance.onerror = () => updatePlayButton(false);
-
     synth.speak(utterance);
 }
 
 function updatePlayButton(isPlaying) {
     const btn = document.getElementById('play-pause-btn');
     if (!btn) return;
-    
     if (isPlaying) {
         btn.innerHTML = '<i class="fa-solid fa-pause"></i> Pausar';
         btn.classList.add('playing');
@@ -157,27 +148,55 @@ function updatePlayButton(isPlaying) {
     }
 }
 
-// 7. SISTEMA DE VOTAÇÃO
+// 7. VOTAÇÃO E EMAIL (IMPORTANTE)
 function vote(type) {
-    // Mostra as tags para justificar o voto
+    currentVoteType = type === 'up' ? "Concordo" : "Discordo";
     const tagsContainer = document.getElementById('tags-container');
     tagsContainer.classList.remove('hidden');
-    
-    // Feedback visual simples
-    const msg = type === 'up' ? "👍 Voto computado: Concordo!" : "👎 Voto computado: Discordo!";
-    alert(msg);
+    tagsContainer.scrollIntoView({ behavior: 'smooth' });
 }
 
-// 8. INTEGRAÇÃO COM IA (BACKEND)
+// ATENÇÃO: Você precisa atualizar o HTML das tags para chamar essa função!
+// Ex no HTML: <button onclick="submitReason('É Justo')">É Justo</button>
+async function submitReason(reason) {
+    if (!currentVoteType || !currentPL) return;
+
+    alert(`📨 Enviando e-mail para: ${currentPL.author}...`);
+
+    try {
+        // Caminho relativo para o Backend
+        const response = await fetch('/send_feedback', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                pl_title: currentPL.title,
+                author_name: currentPL.author,
+                author_email: currentPL.email,
+                vote_type: currentVoteType,
+                reason: reason
+            })
+        });
+
+        const data = await response.json();
+        alert(`✅ ${data.message}\nSua opinião foi registrada!`);
+        
+        document.getElementById('vote-section').classList.add('hidden');
+
+    } catch (error) {
+        console.error(error);
+        alert("Erro ao enviar feedback.");
+    }
+}
+
+// 8. IA (BACKEND)
 async function getAIExplanation() {
     const userInterest = document.getElementById('user-interest').value.trim();
     
     if (!currentPL || !userInterest) {
-        alert("Por favor, digite um tema (ex: Futebol, Cozinha)!");
+        alert("Por favor, digite um tema!");
         return;
     }
 
-    // Elementos UI
     const resultBox = document.getElementById('ai-result');
     const loader = document.getElementById('loader');
     const audioCard = document.getElementById('audio-card');
@@ -185,7 +204,6 @@ async function getAIExplanation() {
     const textOutput = document.getElementById('text-output');
     const voteSection = document.getElementById('vote-section');
 
-    // Reset UI antes de carregar
     stopAudio();
     resultBox.classList.remove('hidden');
     loader.classList.remove('hidden');
@@ -194,8 +212,8 @@ async function getAIExplanation() {
     voteSection.classList.add('hidden');
 
     try {
-        // Chamada ao Backend Python
-        const response = await fetch(API_URL, {
+        // Caminho relativo para o Vercel
+        const response = await fetch('/explain', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -207,30 +225,24 @@ async function getAIExplanation() {
         if (!response.ok) throw new Error('Erro no servidor');
 
         let data = await response.json();
-        
-        // Tratamento de erro se o JSON vier como string
-        if (typeof data === 'string') {
-            try { data = JSON.parse(data); } catch(e) { data = {explanation: data}; }
-        }
+        if (typeof data === 'string') { try { data = JSON.parse(data); } catch(e) { data = {explanation: data}; } }
 
-        // Exibe o texto gerado
         textOutput.innerText = data.explanation;
 
-        // Atualiza visualização final
         loader.classList.add('hidden');
-        audioCard.classList.remove('hidden'); // Mostra Player
-        contentBox.classList.remove('hidden'); // Mostra Texto
-        voteSection.classList.remove('hidden'); // Mostra Votação
+        audioCard.classList.remove('hidden');
+        contentBox.classList.remove('hidden');
+        voteSection.classList.remove('hidden');
 
     } catch (error) {
         console.error(error);
         loader.classList.add('hidden');
-        alert("Erro ao conectar com a IA. Verifique se o arquivo 'main.py' está rodando.");
+        alert("Erro ao conectar com a IA.");
     }
 }
 
-// INICIALIZAÇÃO DO APP
+// INICIALIZAÇÃO
 document.addEventListener('DOMContentLoaded', () => {
     navigateTo('home');
-    setTimeout(simulateGPS, 1000); // Dispara simulação de GPS após 1s
+    setTimeout(simulateGPS, 1000);
 });
