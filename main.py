@@ -14,7 +14,10 @@ import re
 
 # Carrega variáveis do arquivo .env (apenas para rodar localmente)
 # No Vercel, ele ignora isso e pega das "Environment Variables" do painel.
-load_dotenv()
+try:
+    load_dotenv()
+except:
+    pass
 
 # Tenta pegar a chave do ambiente
 API_KEY = os.getenv("GOOGLE_API_KEY")
@@ -22,10 +25,7 @@ API_KEY = os.getenv("GOOGLE_API_KEY")
 if not API_KEY:
     print("⚠️ AVISO: API Key não encontrada nas variáveis de ambiente!")
     print("Para rodar local, crie um arquivo .env com GOOGLE_API_KEY=sua_chave")
-    # Se quiser testar rápido sem .env, descomente a linha abaixo (NÃO SUBA PRO GITHUB):
-    # API_KEY = "SUA_CHAVE_AQUI"
-
-if API_KEY:
+else:
     genai.configure(api_key=API_KEY)
 
 # =====================================================
@@ -36,7 +36,7 @@ app = FastAPI()
 # Configuração de CORS (Permite que o Frontend acesse o Backend)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Em produção real, troque "*" pelo domínio do seu site
+    allow_origins=["*"], # Em produção real, idealmente restringe-se ao domínio
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
