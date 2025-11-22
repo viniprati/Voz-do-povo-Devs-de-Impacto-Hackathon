@@ -30,7 +30,7 @@
             <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar Tema">
                 <i class="fa-solid fa-moon" id="theme-icon"></i>
             </button>
-            <!-- Ícone de Perfil (Classe user-icon para o Dark Mode funcionar) -->
+            <!-- Ícone de Perfil -->
             <i class="fa-solid fa-user-circle user-icon"></i>
         </div>
     </header>
@@ -61,7 +61,8 @@
                 <h1>Leis explicadas pra você ouvir.</h1>
                 <p>Sem leitura chata. Escolha um tema e aperte o play.</p>
             </div>
-                <!-- BOX DE MONITORAMENTO DE OBRAS -->
+
+            <!-- BOX DE MONITORAMENTO DE OBRAS -->
             <div class="monitor-card" onclick="openObrasSite()">
                 <div class="monitor-icon">
                     <i class="fa-solid fa-hard-hat"></i>
@@ -75,28 +76,43 @@
                     <i class="fa-solid fa-chevron-right"></i>
                 </div>
             </div>
-            <!-- Lista de Cards -->
+
+            <!-- Lista de Cards Atualizada com os 5 PDFs -->
             <div class="cards-container">
                 
-                <!-- Card 1 -->
+                <!-- Card 1: Show/Drogas (SP) -->
                 <article class="pl-card" onclick="selectPL(1)">
-                    <span class="tag-badge urgent">🔥 Polêmica</span>
-                    <h3>PL das Fake News</h3>
-                    <p>Regras para redes sociais e combate à desinformação.</p>
+                    <span class="tag-badge urgent">🛡️ Segurança</span>
+                    <h3>Proibição de Apologia ao Crime (SP)</h3>
+                    <p>Veda shows financiados pela prefeitura que incentivem drogas ou crime para menores.</p>
                 </article>
 
-                <!-- Card 2 -->
+                <!-- Card 2: PL das Fake News -->
                 <article class="pl-card" onclick="selectPL(2)">
-                    <span class="tag-badge money">💰 Seu Bolso</span>
-                    <h3>Reforma Tributária</h3>
-                    <p>Mudança nos preços do mercado e cashback.</p>
+                    <span class="tag-badge urgent">🔥 Polêmica</span>
+                    <h3>PL das Fake News (2630/2020)</h3>
+                    <p>Lei de Liberdade, Responsabilidade e Transparência na Internet.</p>
                 </article>
 
-                <!-- Card 3 -->
+                <!-- Card 3: Bullying -->
                 <article class="pl-card" onclick="selectPL(3)">
-                    <span class="tag-badge shop">📦 Compras</span>
-                    <h3>Taxação de Importações</h3>
-                    <p>Imposto da Shein, Shopee e compras internacionais.</p>
+                    <span class="tag-badge shop">🏫 Educação</span>
+                    <h3>Protocolo Anti-Bullying</h3>
+                    <p>Cria mecanismos de proteção psicológica e combate à violência nas escolas.</p>
+                </article>
+
+                <!-- Card 4: Linguagem Neutra -->
+                <article class="pl-card" onclick="selectPL(4)">
+                    <span class="tag-badge shop">🗣️ Cultura</span>
+                    <h3>Proibição de Linguagem Neutra</h3>
+                    <p>Veda o uso de "todes/amigues" em escolas e concursos públicos.</p>
+                </article>
+
+                <!-- Card 5: Código Civil -->
+                <article class="pl-card" onclick="selectPL(5)">
+                    <span class="tag-badge money">⚖️ Legislação</span>
+                    <h3>Atualização do Código Civil</h3>
+                    <p>Reforma massiva sobre direitos digitais, família, herança e contratos.</p>
                 </article>
 
             </div>
@@ -114,15 +130,27 @@
                 <div class="pl-header-detail">
                     <h1 id="pl-title-display">Título do Projeto</h1>
                     <p id="pl-summary-display">Resumo oficial...</p>
+
+                    <!-- BOTÃO DE DOWNLOAD GRANDE (Opcional, mas bom manter) -->
+                    <a id="btn-view-pdf" href="#" class="pdf-action-btn hidden" download>
+                        <i class="fa-solid fa-file-pdf"></i> Baixar Documento Completo
+                    </a>
                 </div>
 
                 <hr class="divider">
 
-                <!-- Input de Interesse -->
+                <!-- CAIXA DE INTERAÇÃO (Chat) -->
                 <div class="ai-interaction-box">
                     <label>Me explica como se fosse...</label>
                     <div class="input-group">
                         <input type="text" id="user-interest" placeholder="Ex: Futebol, Novela, Conversa de bar...">
+                        
+                        <!-- NOVO BOTÃO PEQUENO DE DOWNLOAD (Substitui o Clipe) -->
+                        <a id="mini-pdf-btn" href="#" download class="btn-icon-download" title="Baixar PDF Original" style="display: none;">
+                            <i class="fa-solid fa-download"></i>
+                        </a>
+
+                        <!-- Botão Enviar -->
                         <button id="btn-explain" onclick="getAIExplanation()">
                             <i class="fa-solid fa-paper-plane"></i>
                         </button>
@@ -136,7 +164,7 @@
                         <i class="fa-solid fa-spinner fa-spin"></i> Traduzindo para o povo...
                     </div>
 
-                    <!-- 1. CARD DE ÁUDIO (ATUALIZADO COM CONTROLES) -->
+                    <!-- 1. CARD DE ÁUDIO -->
                     <div id="audio-card" class="audio-card hidden">
                         <div class="audio-header">
                             <i class="fa-solid fa-headphones"></i>
@@ -144,13 +172,11 @@
                         </div>
                         
                         <div class="audio-controls-wrapper">
-                            <!-- Barrinha de Progresso -->
                             <div class="progress-container">
                                 <input type="range" id="speech-progress" value="0" max="100" step="1" disabled>
                             </div>
                     
                             <div class="buttons-row">
-                                <!-- Controle de Velocidade -->
                                 <select id="speed-select" onchange="changeSpeed()">
                                     <option value="0.75">0.75x</option>
                                     <option value="1" selected>1.0x</option>
@@ -159,12 +185,10 @@
                                     <option value="2">2.0x</option>
                                 </select>
                     
-                                <!-- Botão Play/Pause -->
                                 <button id="play-pause-btn" onclick="toggleAudio()">
                                     <i class="fa-solid fa-play"></i> Ouvir Agora
                                 </button>
                     
-                                <!-- Botão Parar -->
                                 <button class="stop-btn" onclick="stopAudio()">
                                     <i class="fa-solid fa-stop"></i>
                                 </button>
@@ -172,13 +196,13 @@
                         </div>
                     </div>
 
-                    <!-- 2. TEXTO (Transcrição) -->
+                    <!-- 2. TEXTO -->
                     <div id="explanation-content" class="hidden">
                         <h3>📝 Explicação:</h3>
                         <p id="text-output"></p>
                     </div>
 
-                    <!-- 3. VOTAÇÃO (Engajamento) -->
+                    <!-- 3. VOTAÇÃO -->
                     <div id="vote-section" class="vote-box hidden">
                         <h3>O que você acha dessa lei?</h3>
                         <div class="thumbs-container">
@@ -190,7 +214,6 @@
                             </button>
                         </div>
 
-                        <!-- Tags de Motivo (Aparecem ao votar) -->
                         <div id="tags-container" class="tags-cloud hidden">
                             <p>Por qual motivo?</p>
                             <button onclick="submitReason('Ajuda o Pobre')">Ajuda o Pobre</button>
@@ -206,7 +229,7 @@
 
     </main>
 
-    <!-- NAVEGAÇÃO MOBILE (Fixo embaixo) -->
+    <!-- NAVEGAÇÃO MOBILE -->
     <nav class="bottom-nav">
         <button class="nav-btn active" onclick="navigateTo('home')" id="nav-home">
             <i class="fa-solid fa-house"></i>

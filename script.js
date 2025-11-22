@@ -1,40 +1,61 @@
 /* ==========================================================================
-   SCRIPT.JS - Lógica do Frontend "Voz do Povo"
+   SCRIPT.JS - Lógica do Frontend "Voz do Povo" (Atualizado com PDFs)
    ========================================================================== */
 
-const API_URL = ""; // Vercel usa caminho relativo
+const API_URL = ""; // Vercel usa caminho relativo (ou coloque o link do seu backend)
 
 let currentPL = null;
 let synth = window.speechSynthesis;
 let utterance = null;
 let currentVoteType = null;
-let currentTextToSpeak = ""; // Guarda o texto atual para quando mudar a velocidade
+let currentTextToSpeak = ""; 
 
-// 1. DADOS DOS PROJETOS DE LEI
+// 1. DADOS DOS PROJETOS DE LEI (Atualizado com os 5 PDFs)
 const PL_DATA = [
     { 
         id: 1, 
-        title: "PL 2630/2020 (Fake News)", 
-        summary: "Regras para redes sociais e combate à desinformação.", 
-        fullText: "O projeto institui a Lei Brasileira de Liberdade, Responsabilidade e Transparência na Internet. Estabelece obrigações para provedores de redes sociais visando combater a desinformação (fake news) e contas robôs.",
-        author: "Dep. Orlando Silva",
-        email: "dep.orlandosilva@camara.leg.br"
+        title: "Proibição de Apologia ao Crime (SP)", 
+        summary: "Veda shows financiados pela prefeitura que incentivem drogas ou crime.", 
+        pdfUrl: "pdfs/pl_shows_sp.pdf", // Nome que renomeamos
+        author: "Ver. Amanda Vettorazzo",
+        email: "amanda@camara.sp.gov.br",
+        fullText: `PROJETO DE LEI DA VEREADORA AMANDA VETTORAZZO. Proíbe a contratação de shows, artistas e eventos abertos ao público infantojuvenil que envolvam, no decorrer da apresentação, expressão de apologia ao crime organizado ou ao uso de drogas. Art. 1º- É direito de toda Criança e Adolescente se desenvolver com dignidade, livre da influência do uso de drogas e do crime organizado. Art. 5º - Fica proibida à Administração Pública Municipal contratar shows que envolvam apologia ao crime. Multa de 100% do valor do contrato em caso de descumprimento.`
     },
     { 
         id: 2, 
-        title: "Reforma Tributária", 
-        summary: "Mudança nos impostos do consumo (IVA) e Cashback.", 
-        fullText: "A proposta unifica cinco tributos (PIS, Cofins, IPI, ICMS e ISS) em uma cobrança única (IVA). Cria o Cashback para devolver impostos a famílias de baixa renda e o Imposto Seletivo para produtos nocivos.",
-        author: "Dep. Aguinaldo Ribeiro",
-        email: "dep.aguinaldoribeiro@camara.leg.br"
+        title: "PL das Fake News (2630/2020)", 
+        summary: "Lei de Liberdade, Responsabilidade e Transparência na Internet.", 
+        pdfUrl: "pdfs/pl_fake_news.pdf", // Nome que renomeamos
+        author: "Sen. Alessandro Vieira",
+        email: "sen.alessandrovieira@senado.leg.br",
+        fullText: `PROJETO DE LEI Nº 2630, DE 2020. Institui a Lei Brasileira de Liberdade, Responsabilidade e Transparência na Internet. Art. 1º Esta lei estabelece normas para redes sociais e serviços de mensageria privada. Objetivos: fortalecimento do processo democrático, combate à desinformação. Vedações: contas inautênticas (robôs), redes de disseminação artificial. Exige relatórios de transparência das plataformas e cria regras para moderação de conteúdo.`
     },
     { 
         id: 3, 
-        title: "Taxação de Importações", 
-        summary: "Imposto para compras internacionais (Shein/Shopee).", 
-        fullText: "Dispõe sobre o tratamento tributário nas importações. Compras até US$ 50 pagam apenas ICMS (17%). Acima de US$ 50, paga-se 60% de imposto federal mais o ICMS estadual.",
-        author: "Ministério da Fazenda",
-        email: "gabinete.ministro@fazenda.gov.br"
+        title: "Protocolo Anti-Bullying", 
+        summary: "Cria mecanismos de proteção psicológica nas escolas.", 
+        pdfUrl: "pdfs/pl_bullying.pdf", // Nome que renomeamos
+        author: "Dep. Gilvan Maximo",
+        email: "dep.gilvanmaximo@camara.leg.br",
+        fullText: `PROJETO DE LEI N.º 1.367, DE 2024. Cria o PROTOCOLO “BULLYING NÃO É BRINCADEIRA”. Obriga escolas a notificarem imediatamente a coordenação pedagógica sobre casos de violência física ou psicológica. Art. 4º Define deveres como: notificar pais presencialmente, notificar Conselho Tutelar em casos graves e criar banco de dados de ocorrências. Penaliza a omissão das escolas.`
+    },
+    { 
+        id: 4, 
+        title: "Proibição de Linguagem Neutra", 
+        summary: "Veda o uso de 'todes/amigues' em escolas e concursos.", 
+        pdfUrl: "pdfs/pl_linguagem.pdf", // Nome que renomeamos
+        author: "Dep. Mauricio do Vôlei",
+        email: "dep.mauriciodovolei@camara.leg.br",
+        fullText: `PROJETO DE LEI N.º 2.080, DE 2024. Dispõe sobre a proibição do uso e do ensino da linguagem neutra nas instituições de ensino públicas e privadas. Art. 1º Fica proibido o uso e o ensino da linguagem neutra em todos os níveis educacionais. Art. 2º Entende-se por linguagem neutra qualquer alteração na norma culta para eliminar distinções de gênero. Prevê sanções aos servidores que descumprirem.`
+    },
+    { 
+        id: 5, 
+        title: "Atualização do Código Civil", 
+        summary: "Reforma sobre direitos digitais, família e contratos.", 
+        pdfUrl: "pdfs/pl_civil.pdf", // Nome que renomeamos
+        author: "Sen. Rodrigo Pacheco",
+        email: "sen.rodrigopacheco@senado.leg.br",
+        fullText: `PROJETO DE LEI N° 4, DE 2025. Dispõe sobre a atualização da Lei nº 10.406 (Código Civil). Inovações principais: Reconhece direitos digitais e herança digital; Proteção jurídica especial aos animais como seres sencientes; Regras sobre Inteligência Artificial e criação de imagens de pessoas; Divórcio unilateral direto em cartório; Alteração no regime de bens e sucessões.`
     }
 ];
 
@@ -86,16 +107,30 @@ function navigateTo(viewName) {
     window.scrollTo(0, 0);
 }
 
-// 5. SELEÇÃO DO PL
+// 5. SELEÇÃO DO PL (Atualizada para Linkar o PDF)
 function selectPL(id) {
     const pl = PL_DATA.find(item => item.id === id);
     if (!pl) return;
 
     currentPL = pl;
 
+    // Preenche Textos
     document.getElementById('pl-title-display').innerText = pl.title;
     document.getElementById('pl-summary-display').innerText = pl.summary;
 
+    // --- ATUALIZAÇÃO: Configura o Botão de PDF ---
+    const pdfBtn = document.getElementById('btn-view-pdf');
+    if (pdfBtn) {
+        if (pl.pdfUrl) {
+            pdfBtn.href = pl.pdfUrl; // Coloca o link do arquivo
+            pdfBtn.classList.remove('hidden'); // Mostra o botão
+        } else {
+            pdfBtn.classList.add('hidden'); // Esconde se não tiver
+        }
+    }
+    // --------------------------------------------
+
+    // Reseta estados anteriores
     document.getElementById('ai-result').classList.add('hidden');
     document.getElementById('vote-section').classList.add('hidden');
     document.getElementById('tags-container').classList.add('hidden');
@@ -104,11 +139,10 @@ function selectPL(id) {
     navigateTo('details');
 }
 
-// 6. LÓGICA DE ÁUDIO (ATUALIZADA)
+// 6. LÓGICA DE ÁUDIO
 function changeSpeed() {
     if (synth.speaking) {
         stopAudio();
-        // Pequeno delay para evitar conflito de áudio
         setTimeout(() => speak(currentTextToSpeak), 50);
     }
 }
@@ -136,19 +170,17 @@ function stopAudio() {
 }
 
 function speak(text) {
-    synth.cancel(); // Para qualquer áudio anterior
+    synth.cancel(); 
 
     currentTextToSpeak = text;
     utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'pt-BR';
     
-    // Pega a velocidade selecionada
     const speedSelect = document.getElementById('speed-select');
     utterance.rate = speedSelect ? parseFloat(speedSelect.value) : 1.0;
 
     const progressBar = document.getElementById('speech-progress');
 
-    // Atualiza a barrinha enquanto fala
     utterance.onboundary = function(event) {
         const percentage = (event.charIndex / text.length) * 100;
         if(progressBar) progressBar.value = percentage;
@@ -192,6 +224,15 @@ async function submitReason(reason) {
     alert(`📨 Enviando e-mail para: ${currentPL.author}...`);
 
     try {
+        // Simulação de envio (se não tiver backend real rodando)
+        console.log("Enviando feedback:", {
+            pl: currentPL.title,
+            voto: currentVoteType,
+            motivo: reason
+        });
+
+        // Se tiver backend, descomente abaixo:
+        /*
         const response = await fetch('/send_feedback', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -203,10 +244,9 @@ async function submitReason(reason) {
                 reason: reason
             })
         });
+        */
 
-        const data = await response.json();
-        alert(`✅ ${data.message}\nSua opinião foi registrada!`);
-        
+        alert(`✅ Opinião registrada!\nMotivo: ${reason}`);
         document.getElementById('vote-section').classList.add('hidden');
 
     } catch (error) {
@@ -241,11 +281,12 @@ async function getAIExplanation() {
     voteSection.classList.add('hidden');
 
     try {
+        // AQUI CHAMA SEU BACKEND PYTHON
         const response = await fetch('/explain', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                pl_text: currentPL.fullText,
+                pl_text: currentPL.fullText, // Envia o texto do PDF que colocamos no topo
                 user_interest: userInterest
             })
         });
@@ -253,7 +294,6 @@ async function getAIExplanation() {
         if (!response.ok) throw new Error('Erro no servidor');
 
         let data = await response.json();
-        // Garante que data é um objeto
         if (typeof data === 'string') { 
             try { data = JSON.parse(data); } 
             catch(e) { data = {explanation: data}; } 
@@ -269,14 +309,31 @@ async function getAIExplanation() {
     } catch (error) {
         console.error(error);
         loader.classList.add('hidden');
-        alert("Erro ao conectar com a IA.");
+        alert("Erro ao conectar com a IA. Verifique se o backend está rodando.");
     }
 }
+
+// 9. MANIPULAÇÃO DE ARQUIVO (Caso o usuário queira subir outro PDF)
+function handleFileUpload() {
+    const fileInput = document.getElementById('pdf-upload');
+    const fileNameDisplay = document.getElementById('file-name');
+    
+    if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        fileNameDisplay.innerText = `Arquivo selecionado: ${file.name}`;
+        fileNameDisplay.style.display = 'block';
+        
+        // Em um app real, aqui leríamos o PDF com PDF.js
+        // Para o hackathon, apenas simulamos que o texto mudou
+        alert("⚠️ Atenção: No modo demonstração, continuaremos usando o texto do PL selecionado.");
+    }
+}
+
 // FUNÇÃO PARA ABRIR O SITE DE OBRAS
 function openObrasSite() {
-    // Abre em nova aba
     window.open("https://obrasorg.vercel.app/", "_blank");
 }
+
 // INICIALIZAÇÃO
 document.addEventListener('DOMContentLoaded', () => {
     navigateTo('home');

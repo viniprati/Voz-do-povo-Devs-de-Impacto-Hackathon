@@ -148,7 +148,6 @@ body {
     margin-bottom: 20px;
     overflow-x: auto;
     padding-bottom: 5px;
-    /* Esconde barra de rolagem */
     scrollbar-width: none; 
     -ms-overflow-style: none;
 }
@@ -204,10 +203,10 @@ body {
 .tag-badge.shop { background: var(--tag-shop-bg); color: var(--tag-shop-text); }
 
 /* =========================================
-   CARD DE OBRAS (NOVO)
+   CARD DE OBRAS
    ========================================= */
 .monitor-card {
-    background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%); /* Laranja Obras */
+    background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
     color: white;
     padding: 20px;
     border-radius: var(--radius);
@@ -222,7 +221,6 @@ body {
     overflow: hidden;
 }
 
-/* Efeito de brilho ao passar o mouse */
 .monitor-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 12px 25px rgba(245, 124, 0, 0.4);
@@ -240,24 +238,9 @@ body {
     flex-shrink: 0;
 }
 
-.monitor-info {
-    flex: 1;
-}
-
-.monitor-info h3 {
-    font-size: 1.1rem;
-    margin-bottom: 4px;
-    font-weight: 700;
-    color: white; /* Força branco */
-}
-
-.monitor-info p {
-    font-size: 0.85rem;
-    opacity: 0.9;
-    line-height: 1.3;
-    margin: 0;
-    color: white;
-}
+.monitor-info { flex: 1; }
+.monitor-info h3 { font-size: 1.1rem; margin-bottom: 4px; font-weight: 700; color: white; }
+.monitor-info p { font-size: 0.85rem; opacity: 0.9; line-height: 1.3; margin: 0; color: white; }
 
 .monitor-action {
     display: flex;
@@ -271,9 +254,8 @@ body {
     white-space: nowrap;
 }
 
-/* Ajuste para Mobile muito pequeno */
 @media (max-width: 380px) {
-    .monitor-action span { display: none; } /* Esconde o texto "Acessar" em telas minusculas */
+    .monitor-action span { display: none; }
 }
 
 /* =========================================
@@ -291,6 +273,30 @@ body {
 
 .pl-header-detail h1 { font-size: 1.4rem; margin-bottom: 8px; color: var(--text-main); line-height: 1.3; }
 .pl-header-detail p { color: var(--text-secondary); border-left: 3px solid var(--border-color); padding-left: 10px; font-size: 0.95rem; }
+
+/* === BOTÃO GRANDE DE PDF === */
+.pdf-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #e63946; /* Vermelho PDF */
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    transition: background 0.2s, transform 0.2s;
+    box-shadow: 0 4px 10px rgba(230, 57, 70, 0.3);
+}
+.pdf-action-btn:hover {
+    background-color: #d62828;
+    transform: translateY(-2px);
+}
+.pdf-action-btn.hidden {
+    display: none;
+}
 
 .divider { border: 0; height: 1px; background: var(--border-color); margin: 25px 0; }
 
@@ -325,6 +331,31 @@ body {
 }
 .input-group input:focus { border-color: var(--primary-color); }
 
+/* === BOTÃO PEQUENO DE DOWNLOAD DO PDF === */
+.input-group .btn-icon-download {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    background: #e0e7ff;
+    color: var(--primary-color);
+    border-radius: 12px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.1s;
+    margin-right: 5px;
+}
+.input-group .btn-icon-download:hover { background: #c7d2fe; }
+.input-group .btn-icon-download:active { transform: scale(0.95); }
+
+/* Ajuste botão de download no Dark Mode */
+body.dark-mode .input-group .btn-icon-download {
+    background: #333;
+    color: var(--primary-light);
+}
+
+/* Botão Enviar */
 .input-group button {
     width: 50px;
     background: var(--primary-color);
@@ -338,7 +369,7 @@ body {
 .input-group button:hover { background: var(--primary-dark); }
 
 /* =========================================
-   5. PLAYER DE ÁUDIO (CORRIGIDO)
+   5. PLAYER DE ÁUDIO
    ========================================= */
 .audio-card {
     background: linear-gradient(135deg, var(--primary-color) 0%, #7c4dff 100%);
@@ -348,8 +379,6 @@ body {
     margin: 25px 0 20px;
     box-shadow: 0 10px 20px rgba(98, 0, 234, 0.25);
     animation: slideUp 0.5s;
-    
-    /* Layout Flexível Vertical */
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -379,7 +408,7 @@ body {
 #speech-progress {
     width: 100%;
     height: 6px;
-    background: rgba(255, 255, 255, 0.3); /* Fundo semi-transparente */
+    background: rgba(255, 255, 255, 0.3);
     border-radius: 5px;
     outline: none;
     -webkit-appearance: none;
@@ -404,7 +433,6 @@ body {
     gap: 10px;
 }
 
-/* Seletor de Velocidade */
 #speed-select {
     background: rgba(255, 255, 255, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.3);
@@ -417,10 +445,7 @@ body {
     outline: none;
 }
 
-#speed-select option {
-    background: #333;
-    color: white;
-}
+#speed-select option { background: #333; color: white; }
 
 /* Botão Play Principal */
 #play-pause-btn {
@@ -441,12 +466,7 @@ body {
 }
 
 #play-pause-btn:active { transform: scale(0.95); }
-
-/* Estilo quando está tocando */
-#play-pause-btn.playing { 
-    background: #ffeb3b; 
-    color: black; 
-}
+#play-pause-btn.playing { background: #ffeb3b; color: black; }
 
 /* Botão Stop */
 .stop-btn {
@@ -510,17 +530,8 @@ body {
     transition: all 0.2s;
 }
 
-.thumb-btn.up:hover { 
-    background: rgba(0, 230, 118, 0.1); 
-    border-color: var(--accent-color); 
-    color: var(--accent-color); 
-}
-
-.thumb-btn.down:hover { 
-    background: rgba(255, 23, 68, 0.1); 
-    border-color: var(--danger-color); 
-    color: var(--danger-color); 
-}
+.thumb-btn.up:hover { background: rgba(0, 230, 118, 0.1); border-color: var(--accent-color); color: var(--accent-color); }
+.thumb-btn.down:hover { background: rgba(255, 23, 68, 0.1); border-color: var(--danger-color); color: var(--danger-color); }
 
 .tags-cloud {
     margin-top: 20px;
@@ -584,7 +595,6 @@ body {
     gap: 10px;
 }
 
-/* Animações */
 @keyframes slideDown { from { opacity: 0; transform: translate(-50%, -20px); } to { opacity: 1; transform: translate(-50%, 0); } }
 @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -627,8 +637,4 @@ body {
 }
 
 .nav-btn i { font-size: 1.4rem; margin-bottom: 2px; }
-
-.nav-btn.active {
-    color: var(--primary-color);
-    font-weight: 600;
-}
+.nav-btn.active { color: var(--primary-color); font-weight: 600; }
