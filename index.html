@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="DesenroLEI: A política sem nó na cabeça.">
-    <title>DesenroLEI | Política sem nó</title>
+    <meta name="description" content="Voz do Povo: Política traduzida para áudio.">
+    <title>Voz do Povo | Hackathon</title>
 
-    <!-- NOVAS FONTES (Mantidas do seu código original + FontAwesome) -->
+    <!-- Fonte Google (Inter) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome (Ícones) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- CSS Principal -->
@@ -20,10 +22,8 @@
     <!-- TOPO -->
     <header class="main-header">
         <div class="logo-container">
-            <!-- ALTERAÇÃO AQUI: Estrutura para o logo DesenroLEI -->
-            <h1 class="logo-desenrolei">
-                Desenro<span>LEI</span>
-            </h1>
+            <i class="fa-solid fa-bullhorn"></i>
+            <span>Voz do Povo</span>
         </div>
         <div class="header-actions">
             <!-- Botão Alternar Tema (Dark Mode) -->
@@ -54,13 +54,12 @@
                 <button class="filter-pill">🇧🇷 Brasil</button>
                 <button class="filter-pill">🔥 Em Alta</button>
                 <button class="filter-pill active">📍 Minha Rua</button>
-                <button class="filter-pill">📚 Educação</button>
+            <button class="filter-pill">📚 Educação</button>
             </div>
 
             <div class="hero-text">
-                <!-- ALTERAÇÃO AQUI: Slogan da marca nova -->
-                <h1>A política sem nó na cabeça.</h1>
-                <p>Traduzimos o "juridiquês" para a sua língua.</p>
+                <h1>Leis explicadas pra você ouvir.</h1>
+                <p>Sem leitura chata. Escolha um tema e aperte o play.</p>
             </div>
 
             <!-- BOX DE MONITORAMENTO DE OBRAS -->
@@ -132,7 +131,7 @@
                     <h1 id="pl-title-display">Título do Projeto</h1>
                     <p id="pl-summary-display">Resumo oficial...</p>
 
-                    <!-- BOTÃO DE DOWNLOAD GRANDE -->
+                    <!-- BOTÃO DE DOWNLOAD GRANDE (Opcional, mas bom manter) -->
                     <a id="btn-view-pdf" href="#" class="pdf-action-btn hidden" download>
                         <i class="fa-solid fa-file-pdf"></i> Baixar Documento Completo
                     </a>
@@ -146,7 +145,7 @@
                     <div class="input-group">
                         <input type="text" id="user-interest" placeholder="Ex: Futebol, Novela, Conversa de bar...">
                         
-                        <!-- BOTÃO PEQUENO DE DOWNLOAD -->
+                        <!-- NOVO BOTÃO PEQUENO DE DOWNLOAD (Substitui o Clipe) -->
                         <a id="mini-pdf-btn" href="#" download class="btn-icon-download" title="Baixar PDF Original" style="display: none;">
                             <i class="fa-solid fa-download"></i>
                         </a>
