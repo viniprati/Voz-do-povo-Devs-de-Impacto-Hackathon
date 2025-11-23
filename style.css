@@ -1,57 +1,100 @@
 /* =========================================
-   1. VARIÁVEIS E CORES (SYSTEM THEME)
+   0. IMPORTAÇÃO DA FONTE HAGRID
+   ========================================= */
+/* 
+   Para funcionar perfeitamente, coloque o arquivo da fonte
+   na pasta 'fonts' do seu projeto.
+*/
+@font-face {
+    font-family: 'Hagrid';
+    src: url('fonts/Hagrid-Heavy.woff2') format('woff2'),
+         url('fonts/Hagrid-Heavy.woff') format('woff'),
+         url('fonts/Hagrid-Heavy.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* =========================================
+   1. VARIÁVEIS E DESIGN SYSTEM (ESTILO "ABC")
    ========================================= */
 :root {
-    /* Cores da Marca */
-    --primary-color: #6200ea;       /* Roxo Vibrante (Identidade) */
-    --primary-light: #b388ff;       /* Roxo Claro */
-    --primary-dark: #4a00b0;        /* Roxo Escuro */
+    /* --- Paleta de Cores "Pitch de Marca" --- */
+    --bg-cream: #F9F4EF;          /* Fundo Principal (Off-white/Creme) */
+    --orange-pop: #FF8C42;        /* Primária: Destaque, Títulos Gigantes */
+    --blue-brand: #5FA6C2;        /* Azul da marca DesenroLEI */
+    --purple-deep: #2D1B36;       /* Secundária: Texto Base, Bordas, Elementos Escuros */
+    --lilac-soft: #D46EB3;        /* Terciária: Detalhes, botões secundários */
+    --white: #FFFFFF;
     
-    --accent-color: #00e676;        /* Verde (Ação/Concordar) */
-    --danger-color: #ff1744;        /* Vermelho (Discordar) */
+    /* Cores Semânticas */
+    --color-success: #00E676;     /* Verde Neon (Concordo) */
+    --color-danger: #FF1744;      /* Vermelho Neon (Discordo) */
+
+    /* Mapeamento de Variáveis (Light Mode Padrão) */
+    --bg-body: var(--bg-cream);
+    --bg-card: var(--white);
+    --bg-contrast: var(--purple-deep); /* Usado para fundos escuros de destaque */
     
-    /* Padrão (Light Mode) */
-    --bg-body: #f3f4f6;             /* Cinza Fundo */
-    --bg-card: #ffffff;             /* Branco */
-    --bg-input: #ffffff;            /* Fundo de Inputs */
-    --text-main: #1f2937;           /* Texto Escuro */
-    --text-secondary: #6b7280;      /* Texto Cinza */
-    --border-color: #e5e7eb;
-    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    --text-main: var(--purple-deep);
+    --text-secondary: #6D5E75;    /* Um roxo acinzentado para subtítulos */
+    
+    --border-color: var(--purple-deep); 
+    --border-width: 2px;
 
-    /* Tags de Categoria */
-    --tag-urgent-bg: #fee2e2; --tag-urgent-text: #ef4444;
-    --tag-money-bg: #d1fae5;  --tag-money-text: #059669;
-    --tag-shop-bg: #ffedd5;   --tag-shop-text: #ea580c;
+    /* --- Efeitos Visuais (Neo-Pop / Soft Brutalism) --- */
+    /* Sombra Sólida (Hard Shadow) - Sem desfoque, estilo "Sticker" */
+    --shadow-hard: 4px 4px 0px var(--purple-deep);
+    --shadow-hover: 2px 2px 0px var(--purple-deep);
+    --shadow-none: 0px 0px 0px var(--purple-deep);
 
-    /* Tags de Voto */
-    --tag-bg: #f3f4f6;
-    --tag-text: #4b5563;
+    /* Formas */
+    --radius-card: 12px;    /* Cantos levemente arredondados, mas firmes */
+    --radius-pill: 50px;    /* Formas de pílula */
+    
+    /* Tags (Categorias) */
+    --tag-urgent-bg: #FF6B6B; --tag-urgent-text: #2D1B36;
+    --tag-money-bg: #4ECDC4;  --tag-money-text: #2D1B36;
+    --tag-shop-bg: #FFE66D;   --tag-shop-text: #2D1B36;
+    
+    /* Tags (Voto) */
+    --tag-bg: var(--white);
+    --tag-text: var(--purple-deep);
 
-    /* Dimensões */
-    --nav-height: 70px;
-    --radius: 16px;
+    /* --- FONTES (ATUALIZADO PARA HAGRID) --- */
+    /* Prioridade: Hagrid > Arial Black (Backup Grosso) > Sans-serif */
+    --font-titles: "Hagrid", "Arial Black", "Archivo Black", sans-serif;
+    
+    /* Fonte de texto normal */
+    --font-body: "DM Sans", "Helvetica Neue", Arial, sans-serif;
 }
 
-/* === MODO ESCURO (DARK MODE) === */
+/* === MODO ESCURO (DARK MODE - INVERTIDO) === */
 body.dark-mode {
-    --bg-body: #121212;
-    --bg-card: #1e1e1e;
-    --bg-input: #2c2c2c;
-    --text-main: #e0e0e0;
-    --text-secondary: #a0a0a0;
-    --border-color: #333333;
-    --shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-
-    /* Tags no Dark Mode */
-    --tag-urgent-bg: #4a1a1a; --tag-urgent-text: #ff8a80;
-    --tag-money-bg: #1a3b2a;  --tag-money-text: #69f0ae;
-    --tag-shop-bg: #3e2723;   --tag-shop-text: #ffcc80;
+    /* Lógica: Inverter Creme <-> Roxo Profundo */
+    --bg-body: #1A1025; 
+    --bg-card: #2D1B36;
+    --bg-contrast: #FF8C42; /* O contraste vira laranja no escuro */
     
-    --tag-bg: #333;
-    --tag-text: #ccc;
+    --text-main: #F9F4EF;   /* Texto vira Creme */
+    --text-secondary: #C8BAD1;
+    
+    --border-color: #4A2C59; /* Bordas um pouco mais claras para aparecer no fundo escuro */
+    --orange-pop: #FF8C42;   /* Laranja continua brilhando */
+    
+    /* Sombra muda para preto total no dark mode */
+    --shadow-hard: 4px 4px 0px #000000;
+    --shadow-hover: 2px 2px 0px #000000;
+    --shadow-none: 0px 0px 0px #000000;
+
+    /* Tags no Dark */
+    --tag-bg: #3E2723;
+    --tag-text: #FFE0B2;
 }
 
+/* =========================================
+   2. RESET E TIPOGRAFIA
+   ========================================= */
 * {
     margin: 0;
     padding: 0;
@@ -59,16 +102,33 @@ body.dark-mode {
 }
 
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body);
     background-color: var(--bg-body);
     color: var(--text-main);
-    padding-bottom: 100px; /* Espaço para navegação mobile */
+    padding-bottom: 100px; /* Espaço para nav mobile */
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     transition: background 0.3s, color 0.3s;
 }
 
-/* Container Centralizado */
+/* Títulos Chunky (Pesados - Estilo da Imagem) */
+h1, h2, h3 {
+    font-family: var(--font-titles); /* Usa Hagrid/Arial Black */
+    text-transform: none;
+    font-weight: 900; /* Peso máximo */
+    letter-spacing: -0.04em; /* Levemente junto para estilo brutalista */
+    line-height: 1.1;
+}
+
+/* Utilitários de Animação */
+.hidden { display: none !important; }
+.view { animation: slideUpFade 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+@keyframes slideUpFade {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 #app-container {
     max-width: 600px;
     margin: 0 auto;
@@ -76,161 +136,170 @@ body {
     min-height: 100vh;
 }
 
-/* Utilitários */
-.hidden { display: none !important; }
-.view { animation: fadeIn 0.4s ease-out; }
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
 /* =========================================
-   2. HEADER (TOPO)
+   3. HEADER (TOPO)
    ========================================= */
 .main-header {
-    background-color: var(--bg-card);
-    padding: 15px 20px;
+    background-color: var(--bg-body); /* Fundo se funde ao body para limpeza visual */
+    padding: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     position: sticky;
     top: 0;
     z-index: 50;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
+    /* Borda sólida embaixo */
+    border-bottom: var(--border-width) solid var(--border-color);
     max-width: 600px;
     margin: 0 auto;
-    transition: background-color 0.3s;
+    transition: border-color 0.3s;
 }
 
 .logo-container {
-    font-weight: 800;
-    font-size: 1.2rem;
-    color: var(--primary-color);
     display: flex;
     align-items: center;
-    gap: 10px;
+    text-decoration: none;
 }
 
-.header-actions {
-    display: flex;
-    gap: 15px;
-    align-items: center;
+/* LOGO COM FONTE HAGRID */
+.logo-desenrolei {
+    font-family: var(--font-titles);
+    font-size: 2.4rem; /* Aumentei um pouco pois Hagrid fica bem grande */
+    font-weight: 900;
+    letter-spacing: -1.5px;
+    color: var(--blue-brand); /* Azul do "Desenro" */
+    margin: 0;
+    text-shadow: none; 
 }
 
-/* Botão Toggle Dark Mode */
-.theme-toggle {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
+.logo-desenrolei span {
+    color: var(--orange-pop); /* Laranja do "LEI" */
+    text-transform: uppercase;
+}
+
+.header-actions { display: flex; gap: 12px; align-items: center; }
+
+/* Botões Circulares no Header */
+.theme-toggle, .user-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: var(--border-width) solid var(--border-color);
+    background: var(--bg-card);
     color: var(--text-main);
-    transition: transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    box-shadow: var(--shadow-hard); /* Sombra dura */
+    transition: transform 0.1s, box-shadow 0.1s;
 }
-.theme-toggle:active { transform: rotate(20deg); }
+
+/* Efeito de Clique "Pressionar Botão Real" */
+.theme-toggle:active, .user-icon:active {
+    transform: translate(4px, 4px);
+    box-shadow: var(--shadow-none);
+}
 
 /* =========================================
-   3. HOME & CARDS
+   4. HOME & COMPONENTES
    ========================================= */
 .hero-text { 
-    margin: 20px 0; 
+    margin: 30px 0; 
     text-align: left; 
 }
-.hero-text h1 { font-size: 1.6rem; margin-bottom: 5px; color: var(--text-main); line-height: 1.2; }
-.hero-text p { color: var(--text-secondary); font-size: 0.95rem; }
+.hero-text h1 { 
+    font-size: 2.2rem;
+    color: var(--text-main);
+    font-family: var(--font-titles); /* Hagrid */
+    font-weight: 900;
+    letter-spacing: -1px;
+    text-shadow: none;
+    line-height: 1;
+}
+body.dark-mode .hero-text h1 { 
+    color: var(--white);
+}
 
-/* Filtros (Scroll Horizontal) */
+.hero-text p { 
+    color: var(--text-secondary); 
+    font-size: 1.1rem; 
+    margin-top: 10px; 
+    font-weight: 500;
+}
+
+/* Filtros (Pills) */
 .filter-scroll {
     display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 12px;
+    margin-bottom: 25px;
     overflow-x: auto;
-    padding-bottom: 5px;
-    scrollbar-width: none; 
-    -ms-overflow-style: none;
+    padding: 5px 5px 15px 5px;
+    scrollbar-width: none;
 }
 .filter-scroll::-webkit-scrollbar { display: none; }
 
 .filter-pill {
     background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
+    border: var(--border-width) solid var(--border-color);
+    color: var(--text-main);
+    padding: 10px 20px;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-titles); /* Hagrid */
+    font-size: 0.8rem;
+    font-weight: 900;
     white-space: nowrap;
     cursor: pointer;
-    transition: all 0.2s;
+    box-shadow: var(--shadow-hard);
+    transition: all 0.1s;
 }
+
 .filter-pill.active {
-    background: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
+    background: var(--purple-deep);
+    color: var(--orange-pop);
+    box-shadow: var(--shadow-hover);
+    transform: translate(2px, 2px);
+}
+.filter-pill:active {
+    box-shadow: var(--shadow-none);
+    transform: translate(4px, 4px);
 }
 
-/* Cards de Projetos */
-.cards-container { display: flex; flex-direction: column; gap: 15px; }
-
-.pl-card {
-    background: var(--bg-card);
-    padding: 20px;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    cursor: pointer;
-    border-left: 5px solid var(--primary-color);
-    transition: transform 0.2s, background 0.3s;
-}
-
-.pl-card:active { transform: scale(0.98); }
-
-.pl-card h3 { font-size: 1.1rem; margin: 10px 0 5px; color: var(--text-main); }
-.pl-card p { color: var(--text-secondary); font-size: 0.9rem; }
-
-/* Tags Coloridas (Badges) */
-.tag-badge {
-    font-size: 0.7rem;
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-weight: 700;
-    text-transform: uppercase;
-    display: inline-block;
-}
-.tag-badge.urgent { background: var(--tag-urgent-bg); color: var(--tag-urgent-text); }
-.tag-badge.money { background: var(--tag-money-bg); color: var(--tag-money-text); }
-.tag-badge.shop { background: var(--tag-shop-bg); color: var(--tag-shop-text); }
-
-/* =========================================
-   CARD DE OBRAS
-   ========================================= */
+/* === MONITOR CARD (Estilo Destaque Laranja) === */
 .monitor-card {
-    background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
-    color: white;
+    background: var(--orange-pop);
+    color: var(--white); /* Texto branco no fundo laranja */
     padding: 20px;
-    border-radius: var(--radius);
+    border-radius: var(--radius-card);
+    border: var(--border-width) solid var(--border-color);
     display: flex;
     align-items: center;
     gap: 15px;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
     cursor: pointer;
-    box-shadow: 0 8px 20px rgba(245, 124, 0, 0.3);
-    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: var(--shadow-hard);
+    transition: transform 0.1s, box-shadow 0.1s;
     position: relative;
     overflow: hidden;
 }
 
 .monitor-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 25px rgba(245, 124, 0, 0.4);
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px var(--purple-deep);
+}
+.monitor-card:active {
+    transform: translate(2px, 2px);
+    box-shadow: var(--shadow-none);
 }
 
 .monitor-icon {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255,255,255,0.2);
+    color: var(--white);
     width: 50px;
     height: 50px;
-    border-radius: 12px;
+    border-radius: 10px;
+    border: 2px solid var(--purple-deep);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -238,81 +307,148 @@ body {
     flex-shrink: 0;
 }
 
-.monitor-info { flex: 1; }
-.monitor-info h3 { font-size: 1.1rem; margin-bottom: 4px; font-weight: 700; color: white; }
-.monitor-info p { font-size: 0.85rem; opacity: 0.9; line-height: 1.3; margin: 0; color: white; }
+.monitor-info h3 { font-size: 1.2rem; margin-bottom: 2px; color: white; }
+.monitor-info p { font-size: 0.9rem; font-weight: 700; opacity: 0.9; line-height: 1.2; }
 
 .monitor-action {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    background: var(--white);
+    color: var(--purple-deep);
+    padding: 8px 14px;
+    border-radius: var(--radius-pill);
     font-size: 0.8rem;
-    font-weight: 700;
-    background: rgba(255, 255, 255, 0.15);
-    padding: 8px 12px;
-    border-radius: 20px;
-    white-space: nowrap;
+    font-family: var(--font-titles); /* Hagrid */
+    text-transform: uppercase;
+    font-weight: 900;
+    display: flex; align-items: center; gap: 5px;
+    border: 2px solid var(--purple-deep);
 }
 
-@media (max-width: 380px) {
-    .monitor-action span { display: none; }
+/* === CARDS DE PROJETOS === */
+.cards-container { display: flex; flex-direction: column; gap: 20px; }
+
+.pl-card {
+    background: var(--bg-card);
+    padding: 20px;
+    border-radius: var(--radius-card);
+    /* Borda grossa em tudo, não só na esquerda */
+    border: var(--border-width) solid var(--border-color);
+    box-shadow: var(--shadow-hard);
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    position: relative;
 }
+
+.pl-card:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 5px 5px 0px var(--border-color);
+}
+.pl-card:active {
+    transform: translate(3px, 3px);
+    box-shadow: 1px 1px 0px var(--border-color);
+}
+
+/* Remove a borda esquerda colorida antiga e usa a cor no título se quiser */
+.pl-card h3 { font-size: 1.3rem; margin: 12px 0 8px; color: var(--text-main); }
+.pl-card p { color: var(--text-secondary); font-size: 1rem; }
+
+/* Badges (Tags) */
+.tag-badge {
+    font-size: 0.7rem;
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    border: 2px solid var(--border-color); /* Borda na tag também */
+    font-weight: 900;
+    text-transform: uppercase;
+    font-family: var(--font-titles); /* Hagrid */
+    display: inline-block;
+    color: var(--purple-deep); /* Texto sempre escuro para contraste nas cores pastel */
+}
+.tag-badge.urgent { background: var(--tag-urgent-bg); }
+.tag-badge.money { background: var(--tag-money-bg); }
+.tag-badge.shop { background: var(--tag-shop-bg); }
 
 /* =========================================
-   4. DETALHES & INPUT
+   5. DETALHES & INPUT
    ========================================= */
 .nav-back {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--text-secondary);
-    font-weight: 600;
-    margin-bottom: 20px;
-    cursor: pointer;
-}
-
-.pl-header-detail h1 { font-size: 1.4rem; margin-bottom: 8px; color: var(--text-main); line-height: 1.3; }
-.pl-header-detail p { color: var(--text-secondary); border-left: 3px solid var(--border-color); padding-left: 10px; font-size: 0.95rem; }
-
-/* === BOTÃO GRANDE DE PDF === */
-.pdf-action-btn {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    margin-top: 15px;
-    padding: 10px 20px;
-    background-color: #e63946; /* Vermelho PDF */
-    color: white;
+    color: var(--text-main);
+    font-family: var(--font-titles); /* Hagrid */
+    text-transform: uppercase;
+    font-weight: 900;
+    font-size: 0.85rem;
+    background: var(--white);
+    padding: 8px 16px;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--radius-pill);
+    margin-bottom: 25px;
+    cursor: pointer;
+    box-shadow: var(--shadow-hard);
+    transition: 0.1s;
+}
+.nav-back:active { transform: translate(4px, 4px); box-shadow: var(--shadow-none); }
+
+body.dark-mode .nav-back { background: var(--orange-pop); color: var(--purple-deep); }
+
+.pl-header-detail h1 { 
+    font-size: 2rem; 
+    margin-bottom: 10px; 
+    color: var(--text-main);
+    text-shadow: none;
+}
+body.dark-mode .pl-header-detail h1 { text-shadow: none; }
+
+.pl-header-detail p { 
+    color: var(--text-main); 
+    border-left: 4px solid var(--orange-pop);
+    padding-left: 15px; 
+    font-size: 1.1rem; 
+    font-style: italic;
+}
+
+/* Botão PDF Grande */
+.pdf-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    padding: 12px 25px;
+    background-color: var(--lilac-soft);
+    color: var(--white);
     text-decoration: none;
-    border-radius: 50px;
+    border-radius: var(--radius-pill);
+    border: var(--border-width) solid var(--border-color);
     font-size: 0.9rem;
-    font-weight: 700;
-    transition: background 0.2s, transform 0.2s;
-    box-shadow: 0 4px 10px rgba(230, 57, 70, 0.3);
+    font-family: var(--font-titles); /* Hagrid */
+    text-transform: uppercase;
+    font-weight: 900;
+    box-shadow: var(--shadow-hard);
+    transition: 0.1s;
 }
-.pdf-action-btn:hover {
-    background-color: #d62828;
-    transform: translateY(-2px);
-}
-.pdf-action-btn.hidden {
-    display: none;
-}
+.pdf-action-btn:hover { transform: translate(-1px, -1px); }
+.pdf-action-btn:active { transform: translate(3px, 3px); box-shadow: var(--shadow-none); }
+.pdf-action-btn.hidden { display: none; }
 
-.divider { border: 0; height: 1px; background: var(--border-color); margin: 25px 0; }
+.divider { border: 0; height: 2px; background: var(--border-color); margin: 30px 0; opacity: 0.2; }
 
-/* Box de Input */
+/* Box de Input (Chat) */
 .ai-interaction-box {
     background: var(--bg-card);
-    padding: 20px;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    padding: 25px;
+    border-radius: var(--radius-card);
+    border: var(--border-width) solid var(--border-color);
+    box-shadow: var(--shadow-hard);
 }
 
 .ai-interaction-box label {
-    font-weight: 600;
+    font-family: var(--font-titles); /* Hagrid */
+    text-transform: uppercase;
+    font-weight: 900;
     display: block;
-    margin-bottom: 10px;
-    color: var(--text-main);
+    margin-bottom: 12px;
+    color: var(--blue-brand); /* Azul no label */
     font-size: 0.9rem;
 }
 
@@ -320,321 +456,276 @@ body {
 
 .input-group input {
     flex: 1;
-    padding: 12px;
-    background: var(--bg-input);
+    padding: 12px 15px;
+    background: var(--bg-body);
     color: var(--text-main);
     border: 2px solid var(--border-color);
     border-radius: 12px;
     font-size: 1rem;
+    font-family: var(--font-body);
     outline: none;
-    transition: border 0.2s;
+    transition: background 0.2s;
 }
-.input-group input:focus { border-color: var(--primary-color); }
+.input-group input:focus { background: var(--white); border-color: var(--orange-pop); }
 
-/* === BOTÃO PEQUENO DE DOWNLOAD DO PDF === */
+/* Botão Pequeno Download */
 .input-group .btn-icon-download {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     width: 50px;
-    background: #e0e7ff;
-    color: var(--primary-color);
+    background: var(--white);
+    color: var(--text-main);
+    border: 2px solid var(--border-color);
     border-radius: 12px;
     font-size: 1.2rem;
     cursor: pointer;
     text-decoration: none;
-    transition: background 0.2s, transform 0.1s;
     margin-right: 5px;
+    box-shadow: 2px 2px 0px var(--border-color);
 }
-.input-group .btn-icon-download:hover { background: #c7d2fe; }
-.input-group .btn-icon-download:active { transform: scale(0.95); }
-
-/* Ajuste botão de download no Dark Mode */
-body.dark-mode .input-group .btn-icon-download {
-    background: #333;
-    color: var(--primary-light);
-}
+.input-group .btn-icon-download:active { transform: translate(2px, 2px); box-shadow: none; }
 
 /* Botão Enviar */
 .input-group button {
-    width: 50px;
-    background: var(--primary-color);
-    color: white;
-    border: none;
+    width: 55px;
+    background: var(--orange-pop);
+    color: var(--white);
+    border: 2px solid var(--border-color);
     border-radius: 12px;
     font-size: 1.2rem;
     cursor: pointer;
-    transition: background 0.2s;
+    box-shadow: 2px 2px 0px var(--border-color);
+    transition: 0.1s;
 }
-.input-group button:hover { background: var(--primary-dark); }
+.input-group button:hover { background: #FF9E60; }
+.input-group button:active { transform: translate(2px, 2px); box-shadow: none; }
 
 /* =========================================
-   5. PLAYER DE ÁUDIO
+   6. PLAYER DE ÁUDIO (ESTILO CASSETE/RETRO)
    ========================================= */
 .audio-card {
-    background: linear-gradient(135deg, var(--primary-color) 0%, #7c4dff 100%);
-    color: white;
-    padding: 20px;
-    border-radius: 20px;
-    margin: 25px 0 20px;
-    box-shadow: 0 10px 20px rgba(98, 0, 234, 0.25);
-    animation: slideUp 0.5s;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    background: var(--bg-contrast); /* Roxo Escuro no Light, Laranja no Dark */
+    color: var(--white);
+    padding: 25px;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--radius-card);
+    margin: 30px 0;
+    box-shadow: var(--shadow-hard);
+    animation: slideUpFade 0.5s;
+    display: flex; flex-direction: column; gap: 15px;
 }
+body.dark-mode .audio-card { color: var(--purple-deep); border-color: var(--white); }
 
 .audio-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.8rem;
-    text-transform: uppercase;
+    font-family: var(--font-titles); /* Hagrid */
+    color: var(--orange-pop);
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.9rem;
     letter-spacing: 1px;
-    opacity: 0.9;
-    font-weight: 700;
+    font-weight: 900;
 }
+body.dark-mode .audio-header { color: var(--purple-deep); }
 
-.audio-controls-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    width: 100%;
-}
-
-/* Barrinha de Progresso */
 .progress-container { width: 100%; }
 
 #speech-progress {
     width: 100%;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 5px;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(0,0,0,0.3);
+    border-radius: 10px;
     outline: none;
     -webkit-appearance: none;
-    cursor: default;
 }
 
 #speech-progress::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 14px;
-    height: 14px;
+    width: 20px; height: 20px;
+    background: var(--orange-pop);
+    border: 2px solid var(--white);
     border-radius: 50%;
-    background: #fff;
-    cursor: default;
-    box-shadow: 0 0 10px rgba(255,255,255,0.8);
+    cursor: pointer;
 }
 
-/* Linha de Botões */
-.buttons-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-}
+.buttons-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 
 #speed-select {
     background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: #fff;
-    padding: 8px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    color: inherit;
+    padding: 8px;
+    border-radius: 10px;
+    font-weight: 700;
     cursor: pointer;
-    outline: none;
 }
+#speed-select option { background: var(--purple-deep); color: white; }
 
-#speed-select option { background: #333; color: white; }
-
-/* Botão Play Principal */
 #play-pause-btn {
     flex: 1;
-    background: white;
-    color: var(--primary-color);
-    border: none;
-    padding: 10px 20px;
-    border-radius: 30px;
-    font-weight: 800;
-    font-size: 0.9rem;
+    background: var(--white);
+    color: var(--purple-deep);
+    border: 2px solid var(--purple-deep);
+    padding: 10px;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-titles); /* Hagrid */
+    text-transform: uppercase;
+    font-weight: 900;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: transform 0.1s;
+    box-shadow: 3px 3px 0px rgba(0,0,0,0.5);
 }
+#play-pause-btn:active { transform: translate(3px, 3px); box-shadow: none; }
+#play-pause-btn.playing { background: #FFFF00; }
 
-#play-pause-btn:active { transform: scale(0.95); }
-#play-pause-btn.playing { background: #ffeb3b; color: black; }
-
-/* Botão Stop */
 .stop-btn {
-    width: 40px;
-    height: 40px;
+    width: 45px; height: 45px;
     background: rgba(255,255,255,0.2);
-    color: white;
-    border: none;
+    color: inherit;
+    border: 2px solid rgba(255,255,255,0.4);
     border-radius: 50%;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    transition: background 0.2s;
+    display: flex; justify-content: center; align-items: center;
 }
-.stop-btn:hover { background: rgba(255,255,255,0.4); }
+.stop-btn:hover { background: rgba(255,255,255,0.3); }
 
 /* Texto Transcrição */
 #explanation-content {
     background: var(--bg-card);
     padding: 20px;
-    border-radius: var(--radius);
+    border-radius: var(--radius-card);
+    border: var(--border-width) solid var(--border-color);
     margin-bottom: 20px;
-    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-hard);
 }
-#explanation-content h3 { font-size: 1rem; margin-bottom: 10px; color: var(--text-secondary); }
-#text-output { color: var(--text-main); line-height: 1.6; font-size: 1.05rem; }
+#explanation-content h3 { color: var(--text-secondary); font-size: 1rem; margin-bottom: 10px; }
 
 /* =========================================
-   6. VOTAÇÃO E FEEDBACK
+   7. VOTAÇÃO E FEEDBACK
    ========================================= */
 .vote-box {
-    background: var(--bg-card);
-    padding: 25px 20px;
-    border-radius: var(--radius);
+    background: var(--lilac-soft); /* Fundo Lilás para destacar */
+    padding: 30px 20px;
+    border-radius: var(--radius-card);
+    border: var(--border-width) solid var(--border-color);
     text-align: center;
-    margin-top: 20px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border-color);
+    margin-top: 30px;
+    box-shadow: var(--shadow-hard);
 }
+body.dark-mode .vote-box { background: #3E2723; }
 
-.vote-box h3 { margin-bottom: 20px; color: var(--text-main); font-size: 1rem; }
+.vote-box h3 { margin-bottom: 20px; color: var(--white); font-size: 1.2rem; text-shadow: 1px 1px 0 var(--purple-deep); font-family: var(--font-titles); }
+body.dark-mode .vote-box h3 { text-shadow: none; }
 
 .thumbs-container { display: flex; gap: 15px; justify-content: center; }
 
 .thumb-btn {
     flex: 1;
     padding: 15px;
-    border: 2px solid var(--border-color);
-    background: var(--bg-input);
-    color: var(--text-main);
+    border: 2px solid var(--purple-deep);
+    background: var(--white);
+    color: var(--purple-deep);
     border-radius: 12px;
     font-weight: 700;
     font-size: 1rem;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+    transition: 0.1s;
 }
 
-.thumb-btn.up:hover { background: rgba(0, 230, 118, 0.1); border-color: var(--accent-color); color: var(--accent-color); }
-.thumb-btn.down:hover { background: rgba(255, 23, 68, 0.1); border-color: var(--danger-color); color: var(--danger-color); }
+.thumb-btn:active { transform: translate(4px, 4px); box-shadow: none; }
+.thumb-btn.up:hover { background: var(--color-success); }
+.thumb-btn.down:hover { background: var(--color-danger); }
 
 .tags-cloud {
     margin-top: 20px;
     padding-top: 15px;
-    border-top: 1px dashed var(--border-color);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    animation: slideUp 0.3s;
+    border-top: 2px dashed rgba(0,0,0,0.1);
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+    animation: slideUpFade 0.3s;
 }
 
-.tags-cloud p { width: 100%; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 8px; }
+.tags-cloud p { width: 100%; font-size: 0.9rem; font-weight: bold; color: var(--purple-deep); margin-bottom: 5px; }
+body.dark-mode .tags-cloud p { color: #fff; }
 
 .tags-cloud button {
     background: var(--tag-bg);
-    border: 1px solid var(--border-color);
-    padding: 8px 14px;
+    border: 2px solid var(--border-color);
+    padding: 8px 16px;
     border-radius: 20px;
     font-size: 0.85rem;
-    color: var(--text-main);
+    font-weight: 600;
+    color: var(--tag-text);
     cursor: pointer;
-    transition: background 0.2s;
+    transition: 0.2s;
 }
 
 .tags-cloud button:hover {
-    background: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
+    background: var(--purple-deep);
+    color: var(--white);
 }
 
-/* Notificação GPS (Toast) */
+/* Toast GPS */
 .gps-toast {
     position: fixed;
-    top: 90px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--primary-color);
-    color: white;
-    padding: 10px 20px;
+    top: 90px; left: 50%; transform: translateX(-50%);
+    background: var(--purple-deep);
+    color: var(--white);
+    padding: 12px 24px;
     border-radius: 30px;
-    font-size: 0.85rem;
+    border: 2px solid var(--orange-pop);
+    font-size: 0.9rem;
     font-weight: 600;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    box-shadow: var(--shadow-hard);
     z-index: 100;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: flex; align-items: center; gap: 10px;
     animation: slideDown 0.5s ease-out;
 }
+
+@keyframes slideDown { from { opacity: 0; transform: translate(-50%, -20px); } to { opacity: 1; transform: translate(-50%, 0); } }
 
 /* Loader */
 #loader {
     text-align: center;
     padding: 30px;
-    color: var(--primary-color);
-    font-weight: 600;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
+    color: var(--purple-deep);
+    font-family: var(--font-titles); /* ATUALIZADO */
+    font-weight: 900;
+    display: flex; flex-direction: column; align-items: center; gap: 15px;
 }
-
-@keyframes slideDown { from { opacity: 0; transform: translate(-50%, -20px); } to { opacity: 1; transform: translate(-50%, 0); } }
-@keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-/* =========================================
-   7. MEDIA QUERIES (DESKTOP)
-   ========================================= */
-@media (min-width: 768px) {
-    .main-header, #app-container { max-width: 800px; }
-    .cards-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-}
+body.dark-mode #loader { color: var(--orange-pop); }
 
 /* =========================================
    8. NAVEGAÇÃO MOBILE
    ========================================= */
 .bottom-nav {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: var(--bg-card);
+    bottom: 0; left: 0; width: 100%;
+    background: var(--purple-deep); /* Barra escura */
     display: flex;
     justify-content: space-around;
-    padding: 10px 0;
-    border-top: 1px solid var(--border-color);
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    padding: 15px 0;
+    border-top: 4px solid var(--orange-pop); /* Linha grossa laranja no topo */
     z-index: 100;
 }
 
 .nav-btn {
     background: none;
     border: none;
-    color: var(--text-secondary);
+    color: rgba(255,255,255,0.5);
     font-size: 0.8rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
     cursor: pointer;
     flex: 1;
+    font-family: var(--font-titles); /* ATUALIZADO */
 }
 
-.nav-btn i { font-size: 1.4rem; margin-bottom: 2px; }
-.nav-btn.active { color: var(--primary-color); font-weight: 600; }
+.nav-btn i { font-size: 1.5rem; margin-bottom: 2px; transition: transform 0.2s; }
+.nav-btn.active { color: var(--orange-pop); font-weight: 700; }
+.nav-btn.active i { transform: scale(1.2); }
+
+/* =========================================
+   9. MEDIA QUERIES
+   ========================================= */
+@media (min-width: 768px) {
+    .main-header, #app-container { max-width: 800px; }
+    .cards-container { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+}
