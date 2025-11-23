@@ -1,10 +1,6 @@
 /* =========================================
    0. IMPORTAÇÃO DA FONTE HAGRID
    ========================================= */
-/* 
-   Para funcionar perfeitamente, coloque o arquivo da fonte
-   na pasta 'fonts' do seu projeto.
-*/
 @font-face {
     font-family: 'Hagrid';
     src: url('fonts/Hagrid-Heavy.woff2') format('woff2'),
@@ -16,78 +12,69 @@
 }
 
 /* =========================================
-   1. VARIÁVEIS E DESIGN SYSTEM (ESTILO "ABC")
+   1. VARIÁVEIS E DESIGN SYSTEM (LIMPO/FLAT)
    ========================================= */
 :root {
-    /* --- Paleta de Cores "Pitch de Marca" --- */
-    --bg-cream: #F9F4EF;          /* Fundo Principal (Off-white/Creme) */
-    --orange-pop: #FF8C42;        /* Primária: Destaque, Títulos Gigantes */
-    --blue-brand: #5FA6C2;        /* Azul da marca DesenroLEI */
-    --purple-deep: #2D1B36;       /* Secundária: Texto Base, Bordas, Elementos Escuros */
-    --lilac-soft: #D46EB3;        /* Terciária: Detalhes, botões secundários */
+    /* --- Paleta de Cores --- */
+    --bg-cream: #F9F4EF;
+    --orange-pop: #FF8C42;
+    --blue-brand: #5FA6C2;
+    --purple-deep: #2D1B36;
+    --lilac-soft: #D46EB3;
     --white: #FFFFFF;
     
     /* Cores Semânticas */
-    --color-success: #00E676;     /* Verde Neon (Concordo) */
-    --color-danger: #FF1744;      /* Vermelho Neon (Discordo) */
+    --color-success: #00E676;
+    --color-danger: #FF1744;
 
-    /* Mapeamento de Variáveis (Light Mode Padrão) */
+    /* Mapeamento (Light Mode) */
     --bg-body: var(--bg-cream);
     --bg-card: var(--white);
-    --bg-contrast: var(--purple-deep); /* Usado para fundos escuros de destaque */
+    --bg-contrast: var(--purple-deep);
     
     --text-main: var(--purple-deep);
-    --text-secondary: #6D5E75;    /* Um roxo acinzentado para subtítulos */
+    --text-secondary: #6D5E75;    
     
     --border-color: var(--purple-deep); 
     --border-width: 2px;
 
-    /* --- Efeitos Visuais (Neo-Pop / Soft Brutalism) --- */
-    /* Sombra Sólida (Hard Shadow) - Sem desfoque, estilo "Sticker" */
-    --shadow-hard: 4px 4px 0px var(--purple-deep);
-    --shadow-hover: 2px 2px 0px var(--purple-deep);
-    --shadow-none: 0px 0px 0px var(--purple-deep);
-
-    /* Formas */
-    --radius-card: 12px;    /* Cantos levemente arredondados, mas firmes */
-    --radius-pill: 50px;    /* Formas de pílula */
+    /* --- EFEITOS VISUAIS (REMOVIDO O REALCE PRETO) --- */
+    /* Agora a sombra é 'none' (nenhuma) ou muito suave */
+    --shadow-hard: none; 
+    --shadow-hover: 0 4px 12px rgba(0,0,0,0.08); /* Sombra suave apenas ao passar o mouse */
     
-    /* Tags (Categorias) */
+    /* Raios de borda */
+    --radius-card: 12px;
+    --radius-pill: 50px;
+    
+    /* Tags */
     --tag-urgent-bg: #FF6B6B; --tag-urgent-text: #2D1B36;
     --tag-money-bg: #4ECDC4;  --tag-money-text: #2D1B36;
     --tag-shop-bg: #FFE66D;   --tag-shop-text: #2D1B36;
     
-    /* Tags (Voto) */
     --tag-bg: var(--white);
     --tag-text: var(--purple-deep);
 
-    /* --- FONTES (ATUALIZADO PARA HAGRID) --- */
-    /* Prioridade: Hagrid > Arial Black (Backup Grosso) > Sans-serif */
+    /* --- FONTES --- */
     --font-titles: "Hagrid", "Arial Black", "Archivo Black", sans-serif;
-    
-    /* Fonte de texto normal */
     --font-body: "DM Sans", "Helvetica Neue", Arial, sans-serif;
 }
 
-/* === MODO ESCURO (DARK MODE - INVERTIDO) === */
+/* === MODO ESCURO === */
 body.dark-mode {
-    /* Lógica: Inverter Creme <-> Roxo Profundo */
     --bg-body: #1A1025; 
     --bg-card: #2D1B36;
-    --bg-contrast: #FF8C42; /* O contraste vira laranja no escuro */
+    --bg-contrast: #FF8C42;
     
-    --text-main: #F9F4EF;   /* Texto vira Creme */
+    --text-main: #F9F4EF;
     --text-secondary: #C8BAD1;
     
-    --border-color: #4A2C59; /* Bordas um pouco mais claras para aparecer no fundo escuro */
-    --orange-pop: #FF8C42;   /* Laranja continua brilhando */
+    --border-color: #4A2C59;
+    --orange-pop: #FF8C42;
     
-    /* Sombra muda para preto total no dark mode */
-    --shadow-hard: 4px 4px 0px #000000;
-    --shadow-hover: 2px 2px 0px #000000;
-    --shadow-none: 0px 0px 0px #000000;
+    --shadow-hard: none;
+    --shadow-hover: 0 4px 12px rgba(0,0,0,0.3);
 
-    /* Tags no Dark */
     --tag-bg: #3E2723;
     --tag-text: #FFE0B2;
 }
@@ -95,32 +82,26 @@ body.dark-mode {
 /* =========================================
    2. RESET E TIPOGRAFIA
    ========================================= */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
     font-family: var(--font-body);
     background-color: var(--bg-body);
     color: var(--text-main);
-    padding-bottom: 100px; /* Espaço para nav mobile */
+    padding-bottom: 100px;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     transition: background 0.3s, color 0.3s;
 }
 
-/* Títulos Chunky (Pesados - Estilo da Imagem) */
 h1, h2, h3 {
-    font-family: var(--font-titles); /* Usa Hagrid/Arial Black */
+    font-family: var(--font-titles);
+    font-weight: 900;
+    letter-spacing: -0.04em;
     text-transform: none;
-    font-weight: 900; /* Peso máximo */
-    letter-spacing: -0.04em; /* Levemente junto para estilo brutalista */
     line-height: 1.1;
 }
 
-/* Utilitários de Animação */
 .hidden { display: none !important; }
 .view { animation: slideUpFade 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
@@ -130,112 +111,71 @@ h1, h2, h3 {
 }
 
 #app-container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    min-height: 100vh;
+    max-width: 600px; margin: 0 auto; padding: 20px; min-height: 100vh;
 }
 
 /* =========================================
    3. HEADER (TOPO)
    ========================================= */
 .main-header {
-    background-color: var(--bg-body); /* Fundo se funde ao body para limpeza visual */
+    background-color: var(--bg-body);
     padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    /* Borda sólida embaixo */
+    display: flex; justify-content: space-between; align-items: center;
+    position: sticky; top: 0; z-index: 50;
     border-bottom: var(--border-width) solid var(--border-color);
-    max-width: 600px;
-    margin: 0 auto;
+    max-width: 600px; margin: 0 auto;
     transition: border-color 0.3s;
 }
 
-.logo-container {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-}
+.logo-container { display: flex; align-items: center; text-decoration: none; }
 
-/* LOGO COM FONTE HAGRID */
 .logo-desenrolei {
     font-family: var(--font-titles);
-    font-size: 2.4rem; /* Aumentei um pouco pois Hagrid fica bem grande */
-    font-weight: 900;
+    font-size: 2.4rem; font-weight: 900;
     letter-spacing: -1.5px;
-    color: var(--blue-brand); /* Azul do "Desenro" */
-    margin: 0;
-    text-shadow: none; 
+    color: var(--blue-brand); margin: 0;
+    line-height: 1; text-shadow: none;
 }
-
-.logo-desenrolei span {
-    color: var(--orange-pop); /* Laranja do "LEI" */
-    text-transform: uppercase;
-}
+.logo-desenrolei span { color: var(--orange-pop); text-transform: uppercase; }
 
 .header-actions { display: flex; gap: 12px; align-items: center; }
 
-/* Botões Circulares no Header */
+/* Botões Circulares - Sem sombra dura */
 .theme-toggle, .user-icon {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
+    width: 45px; height: 45px; border-radius: 50%;
     border: var(--border-width) solid var(--border-color);
-    background: var(--bg-card);
-    color: var(--text-main);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 1.1rem;
-    box-shadow: var(--shadow-hard); /* Sombra dura */
-    transition: transform 0.1s, box-shadow 0.1s;
+    background: var(--bg-card); color: var(--text-main);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 1.1rem;
+    box-shadow: var(--shadow-hard); /* Agora é 'none' */
+    transition: transform 0.1s, box-shadow 0.2s;
 }
-
-/* Efeito de Clique "Pressionar Botão Real" */
+/* Efeito de clique sutil (Scale) */
 .theme-toggle:active, .user-icon:active {
-    transform: translate(4px, 4px);
-    box-shadow: var(--shadow-none);
+    transform: scale(0.95); 
 }
 
 /* =========================================
    4. HOME & COMPONENTES
    ========================================= */
-.hero-text { 
-    margin: 30px 0; 
-    text-align: left; 
-}
+.hero-text { margin: 30px 0; text-align: left; }
+
 .hero-text h1 { 
-    font-size: 2.2rem;
-    color: var(--text-main);
-    font-family: var(--font-titles); /* Hagrid */
-    font-weight: 900;
-    letter-spacing: -1px;
-    text-shadow: none;
-    line-height: 1;
+    font-size: 2.2rem; color: var(--text-main);
+    font-family: var(--font-titles); font-weight: 900;
+    letter-spacing: -1px; text-shadow: none; line-height: 1;
 }
-body.dark-mode .hero-text h1 { 
-    color: var(--white);
-}
+body.dark-mode .hero-text h1 { color: var(--white); }
 
 .hero-text p { 
-    color: var(--text-secondary); 
-    font-size: 1.1rem; 
-    margin-top: 10px; 
-    font-weight: 500;
+    color: var(--text-secondary); font-size: 1.1rem; 
+    margin-top: 10px; font-weight: 500; font-family: var(--font-body);
 }
 
-/* Filtros (Pills) */
+/* Filtros */
 .filter-scroll {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 25px;
-    overflow-x: auto;
-    padding: 5px 5px 15px 5px;
+    display: flex; gap: 12px; margin-bottom: 25px;
+    overflow-x: auto; padding: 5px 5px 15px 5px;
     scrollbar-width: none;
 }
 .filter-scroll::-webkit-scrollbar { display: none; }
@@ -244,124 +184,78 @@ body.dark-mode .hero-text h1 {
     background: var(--bg-card);
     border: var(--border-width) solid var(--border-color);
     color: var(--text-main);
-    padding: 10px 20px;
-    border-radius: var(--radius-pill);
-    font-family: var(--font-titles); /* Hagrid */
-    font-size: 0.8rem;
-    font-weight: 900;
-    white-space: nowrap;
-    cursor: pointer;
-    box-shadow: var(--shadow-hard);
-    transition: all 0.1s;
+    padding: 10px 20px; border-radius: var(--radius-pill);
+    font-family: var(--font-titles); font-weight: 900; font-size: 0.8rem;
+    white-space: nowrap; cursor: pointer;
+    box-shadow: var(--shadow-hard); /* None */
+    transition: all 0.2s;
 }
-
 .filter-pill.active {
-    background: var(--purple-deep);
-    color: var(--orange-pop);
-    box-shadow: var(--shadow-hover);
-    transform: translate(2px, 2px);
+    background: var(--purple-deep); color: var(--orange-pop);
+    border-color: var(--purple-deep);
 }
-.filter-pill:active {
-    box-shadow: var(--shadow-none);
-    transform: translate(4px, 4px);
-}
+.filter-pill:active { transform: scale(0.95); }
 
-/* === MONITOR CARD (Estilo Destaque Laranja) === */
+/* Monitor Card - Sem sombra preta */
 .monitor-card {
-    background: var(--orange-pop);
-    color: var(--white); /* Texto branco no fundo laranja */
-    padding: 20px;
-    border-radius: var(--radius-card);
+    background: var(--orange-pop); color: var(--white);
+    padding: 20px; border-radius: var(--radius-card);
     border: var(--border-width) solid var(--border-color);
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 30px;
-    cursor: pointer;
-    box-shadow: var(--shadow-hard);
-    transition: transform 0.1s, box-shadow 0.1s;
-    position: relative;
-    overflow: hidden;
+    display: flex; align-items: center; gap: 15px;
+    margin-bottom: 30px; cursor: pointer;
+    box-shadow: var(--shadow-hard); /* None */
+    transition: transform 0.2s, box-shadow 0.2s;
 }
-
-.monitor-card:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0px var(--purple-deep);
+.monitor-card:hover { 
+    transform: translateY(-2px); /* Flutua levemente */
+    box-shadow: var(--shadow-hover); /* Sombra suave */
 }
-.monitor-card:active {
-    transform: translate(2px, 2px);
-    box-shadow: var(--shadow-none);
-}
+.monitor-card:active { transform: scale(0.99); }
 
 .monitor-icon {
-    background: rgba(255,255,255,0.2);
-    color: var(--white);
-    width: 50px;
-    height: 50px;
-    border-radius: 10px;
+    background: rgba(255,255,255,0.2); color: var(--white);
+    width: 50px; height: 50px; border-radius: 10px;
     border: 2px solid var(--purple-deep);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; flex-shrink: 0;
 }
-
 .monitor-info h3 { font-size: 1.2rem; margin-bottom: 2px; color: white; }
 .monitor-info p { font-size: 0.9rem; font-weight: 700; opacity: 0.9; line-height: 1.2; }
 
 .monitor-action {
-    background: var(--white);
-    color: var(--purple-deep);
-    padding: 8px 14px;
-    border-radius: var(--radius-pill);
-    font-size: 0.8rem;
-    font-family: var(--font-titles); /* Hagrid */
-    text-transform: uppercase;
-    font-weight: 900;
-    display: flex; align-items: center; gap: 5px;
+    background: var(--white); color: var(--purple-deep);
+    padding: 8px 14px; border-radius: var(--radius-pill);
+    font-size: 0.8rem; font-family: var(--font-titles); font-weight: 900;
+    text-transform: uppercase; display: flex; align-items: center; gap: 5px;
     border: 2px solid var(--purple-deep);
 }
 
-/* === CARDS DE PROJETOS === */
+/* Cards - Sem sombra preta */
 .cards-container { display: flex; flex-direction: column; gap: 20px; }
 
 .pl-card {
-    background: var(--bg-card);
-    padding: 20px;
+    background: var(--bg-card); padding: 20px;
     border-radius: var(--radius-card);
-    /* Borda grossa em tudo, não só na esquerda */
     border: var(--border-width) solid var(--border-color);
-    box-shadow: var(--shadow-hard);
+    box-shadow: var(--shadow-hard); /* None */
     cursor: pointer;
-    transition: transform 0.1s, box-shadow 0.1s;
-    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s; position: relative;
 }
+.pl-card:hover { 
+    transform: translateY(-2px); 
+    box-shadow: var(--shadow-hover); 
+}
+.pl-card:active { transform: scale(0.99); }
 
-.pl-card:hover {
-    transform: translate(-1px, -1px);
-    box-shadow: 5px 5px 0px var(--border-color);
-}
-.pl-card:active {
-    transform: translate(3px, 3px);
-    box-shadow: 1px 1px 0px var(--border-color);
-}
-
-/* Remove a borda esquerda colorida antiga e usa a cor no título se quiser */
 .pl-card h3 { font-size: 1.3rem; margin: 12px 0 8px; color: var(--text-main); }
 .pl-card p { color: var(--text-secondary); font-size: 1rem; }
 
-/* Badges (Tags) */
 .tag-badge {
-    font-size: 0.7rem;
-    padding: 6px 12px;
-    border-radius: var(--radius-pill);
-    border: 2px solid var(--border-color); /* Borda na tag também */
-    font-weight: 900;
-    text-transform: uppercase;
-    font-family: var(--font-titles); /* Hagrid */
-    display: inline-block;
-    color: var(--purple-deep); /* Texto sempre escuro para contraste nas cores pastel */
+    font-size: 0.7rem; padding: 6px 12px;
+    border-radius: var(--radius-pill); border: 2px solid var(--border-color);
+    font-weight: 900; text-transform: uppercase;
+    font-family: var(--font-titles); display: inline-block;
+    color: var(--purple-deep);
 }
 .tag-badge.urgent { background: var(--tag-urgent-bg); }
 .tag-badge.money { background: var(--tag-money-bg); }
@@ -371,179 +265,114 @@ body.dark-mode .hero-text h1 {
    5. DETALHES & INPUT
    ========================================= */
 .nav-back {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--text-main);
-    font-family: var(--font-titles); /* Hagrid */
-    text-transform: uppercase;
-    font-weight: 900;
-    font-size: 0.85rem;
-    background: var(--white);
-    padding: 8px 16px;
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--text-main); font-family: var(--font-titles);
+    text-transform: uppercase; font-weight: 900; font-size: 0.85rem;
+    background: var(--white); padding: 8px 16px;
     border: var(--border-width) solid var(--border-color);
-    border-radius: var(--radius-pill);
-    margin-bottom: 25px;
-    cursor: pointer;
-    box-shadow: var(--shadow-hard);
-    transition: 0.1s;
+    border-radius: var(--radius-pill); margin-bottom: 25px;
+    cursor: pointer; box-shadow: var(--shadow-hard); transition: 0.1s;
 }
-.nav-back:active { transform: translate(4px, 4px); box-shadow: var(--shadow-none); }
-
+.nav-back:active { transform: scale(0.98); }
 body.dark-mode .nav-back { background: var(--orange-pop); color: var(--purple-deep); }
 
 .pl-header-detail h1 { 
-    font-size: 2rem; 
-    margin-bottom: 10px; 
-    color: var(--text-main);
-    text-shadow: none;
+    font-size: 2rem; margin-bottom: 10px; color: var(--text-main); text-shadow: none;
 }
-body.dark-mode .pl-header-detail h1 { text-shadow: none; }
-
 .pl-header-detail p { 
-    color: var(--text-main); 
-    border-left: 4px solid var(--orange-pop);
-    padding-left: 15px; 
-    font-size: 1.1rem; 
-    font-style: italic;
+    color: var(--text-main); border-left: 4px solid var(--orange-pop);
+    padding-left: 15px; font-size: 1.1rem; font-style: italic;
 }
 
-/* Botão PDF Grande */
 .pdf-action-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 20px;
-    padding: 12px 25px;
-    background-color: var(--lilac-soft);
-    color: var(--white);
-    text-decoration: none;
-    border-radius: var(--radius-pill);
+    display: inline-flex; align-items: center; gap: 10px;
+    margin-top: 20px; padding: 12px 25px;
+    background-color: var(--lilac-soft); color: var(--white);
+    text-decoration: none; border-radius: var(--radius-pill);
     border: var(--border-width) solid var(--border-color);
-    font-size: 0.9rem;
-    font-family: var(--font-titles); /* Hagrid */
-    text-transform: uppercase;
-    font-weight: 900;
-    box-shadow: var(--shadow-hard);
-    transition: 0.1s;
+    font-size: 0.9rem; font-family: var(--font-titles);
+    text-transform: uppercase; font-weight: 900;
+    box-shadow: var(--shadow-hard); transition: 0.1s;
 }
-.pdf-action-btn:hover { transform: translate(-1px, -1px); }
-.pdf-action-btn:active { transform: translate(3px, 3px); box-shadow: var(--shadow-none); }
+.pdf-action-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+.pdf-action-btn:active { transform: scale(0.98); }
 .pdf-action-btn.hidden { display: none; }
 
 .divider { border: 0; height: 2px; background: var(--border-color); margin: 30px 0; opacity: 0.2; }
 
-/* Box de Input (Chat) */
 .ai-interaction-box {
-    background: var(--bg-card);
-    padding: 25px;
+    background: var(--bg-card); padding: 25px;
     border-radius: var(--radius-card);
     border: var(--border-width) solid var(--border-color);
     box-shadow: var(--shadow-hard);
 }
 
 .ai-interaction-box label {
-    font-family: var(--font-titles); /* Hagrid */
-    text-transform: uppercase;
-    font-weight: 900;
-    display: block;
-    margin-bottom: 12px;
-    color: var(--blue-brand); /* Azul no label */
-    font-size: 0.9rem;
+    font-family: var(--font-titles); text-transform: uppercase;
+    font-weight: 900; display: block; margin-bottom: 12px;
+    color: var(--blue-brand); font-size: 0.9rem;
 }
 
 .input-group { display: flex; gap: 10px; }
 
 .input-group input {
-    flex: 1;
-    padding: 12px 15px;
-    background: var(--bg-body);
-    color: var(--text-main);
-    border: 2px solid var(--border-color);
-    border-radius: 12px;
-    font-size: 1rem;
-    font-family: var(--font-body);
-    outline: none;
-    transition: background 0.2s;
+    flex: 1; padding: 12px 15px;
+    background: var(--bg-body); color: var(--text-main);
+    border: 2px solid var(--border-color); border-radius: 12px;
+    font-size: 1rem; font-family: var(--font-body);
+    outline: none; transition: background 0.2s;
 }
 .input-group input:focus { background: var(--white); border-color: var(--orange-pop); }
 
-/* Botão Pequeno Download */
 .input-group .btn-icon-download {
     display: flex; align-items: center; justify-content: center;
-    width: 50px;
-    background: var(--white);
-    color: var(--text-main);
-    border: 2px solid var(--border-color);
-    border-radius: 12px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    text-decoration: none;
-    margin-right: 5px;
-    box-shadow: 2px 2px 0px var(--border-color);
+    width: 50px; background: var(--white); color: var(--text-main);
+    border: 2px solid var(--border-color); border-radius: 12px;
+    font-size: 1.2rem; cursor: pointer; text-decoration: none;
+    margin-right: 5px; box-shadow: var(--shadow-hard);
 }
-.input-group .btn-icon-download:active { transform: translate(2px, 2px); box-shadow: none; }
+.input-group .btn-icon-download:active { transform: scale(0.95); }
 
-/* Botão Enviar */
 .input-group button {
-    width: 55px;
-    background: var(--orange-pop);
-    color: var(--white);
-    border: 2px solid var(--border-color);
-    border-radius: 12px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    box-shadow: 2px 2px 0px var(--border-color);
-    transition: 0.1s;
+    width: 55px; background: var(--orange-pop); color: var(--white);
+    border: 2px solid var(--border-color); border-radius: 12px;
+    font-size: 1.2rem; cursor: pointer;
+    box-shadow: var(--shadow-hard); transition: 0.1s;
 }
 .input-group button:hover { background: #FF9E60; }
-.input-group button:active { transform: translate(2px, 2px); box-shadow: none; }
+.input-group button:active { transform: scale(0.95); }
 
 /* =========================================
-   6. PLAYER DE ÁUDIO (ESTILO CASSETE/RETRO)
+   6. PLAYER DE ÁUDIO
    ========================================= */
 .audio-card {
-    background: var(--bg-contrast); /* Roxo Escuro no Light, Laranja no Dark */
-    color: var(--white);
-    padding: 25px;
-    border: var(--border-width) solid var(--border-color);
-    border-radius: var(--radius-card);
-    margin: 30px 0;
-    box-shadow: var(--shadow-hard);
-    animation: slideUpFade 0.5s;
+    background: var(--bg-contrast); color: var(--white);
+    padding: 25px; border: var(--border-width) solid var(--border-color);
+    border-radius: var(--radius-card); margin: 30px 0;
+    box-shadow: var(--shadow-hard); animation: slideUpFade 0.5s;
     display: flex; flex-direction: column; gap: 15px;
 }
 body.dark-mode .audio-card { color: var(--purple-deep); border-color: var(--white); }
 
 .audio-header {
-    font-family: var(--font-titles); /* Hagrid */
-    color: var(--orange-pop);
+    font-family: var(--font-titles); color: var(--orange-pop);
     display: flex; align-items: center; gap: 10px;
-    font-size: 0.9rem;
-    letter-spacing: 1px;
-    font-weight: 900;
+    font-size: 0.9rem; letter-spacing: 1px; font-weight: 900;
 }
 body.dark-mode .audio-header { color: var(--purple-deep); }
 
 .progress-container { width: 100%; }
 
 #speech-progress {
-    width: 100%;
-    height: 12px;
+    width: 100%; height: 12px;
     background: rgba(255, 255, 255, 0.2);
-    border: 2px solid rgba(0,0,0,0.3);
-    border-radius: 10px;
-    outline: none;
-    -webkit-appearance: none;
+    border: 2px solid rgba(0,0,0,0.3); border-radius: 10px;
+    outline: none; -webkit-appearance: none;
 }
-
 #speech-progress::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 20px; height: 20px;
-    background: var(--orange-pop);
-    border: 2px solid var(--white);
-    border-radius: 50%;
-    cursor: pointer;
+    -webkit-appearance: none; width: 20px; height: 20px;
+    background: var(--orange-pop); border: 2px solid var(--white);
+    border-radius: 50%; cursor: pointer;
 }
 
 .buttons-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
@@ -551,144 +380,99 @@ body.dark-mode .audio-header { color: var(--purple-deep); }
 #speed-select {
     background: rgba(255, 255, 255, 0.2);
     border: 2px solid rgba(255, 255, 255, 0.4);
-    color: inherit;
-    padding: 8px;
-    border-radius: 10px;
-    font-weight: 700;
-    cursor: pointer;
+    color: inherit; padding: 8px; border-radius: 10px;
+    font-weight: 700; cursor: pointer;
 }
 #speed-select option { background: var(--purple-deep); color: white; }
 
 #play-pause-btn {
-    flex: 1;
-    background: var(--white);
-    color: var(--purple-deep);
-    border: 2px solid var(--purple-deep);
-    padding: 10px;
+    flex: 1; background: var(--white); color: var(--purple-deep);
+    border: 2px solid var(--purple-deep); padding: 10px;
     border-radius: var(--radius-pill);
-    font-family: var(--font-titles); /* Hagrid */
-    text-transform: uppercase;
-    font-weight: 900;
-    cursor: pointer;
-    box-shadow: 3px 3px 0px rgba(0,0,0,0.5);
+    font-family: var(--font-titles); text-transform: uppercase;
+    font-weight: 900; cursor: pointer;
+    box-shadow: var(--shadow-hard);
 }
-#play-pause-btn:active { transform: translate(3px, 3px); box-shadow: none; }
+#play-pause-btn:active { transform: scale(0.98); }
 #play-pause-btn.playing { background: #FFFF00; }
 
 .stop-btn {
     width: 45px; height: 45px;
-    background: rgba(255,255,255,0.2);
-    color: inherit;
-    border: 2px solid rgba(255,255,255,0.4);
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex; justify-content: center; align-items: center;
+    background: rgba(255,255,255,0.2); color: inherit;
+    border: 2px solid rgba(255,255,255,0.4); border-radius: 50%;
+    cursor: pointer; display: flex; justify-content: center; align-items: center;
 }
 .stop-btn:hover { background: rgba(255,255,255,0.3); }
 
-/* Texto Transcrição */
 #explanation-content {
-    background: var(--bg-card);
-    padding: 20px;
+    background: var(--bg-card); padding: 20px;
     border-radius: var(--radius-card);
     border: var(--border-width) solid var(--border-color);
-    margin-bottom: 20px;
-    box-shadow: var(--shadow-hard);
+    margin-bottom: 20px; box-shadow: var(--shadow-hard);
 }
 #explanation-content h3 { color: var(--text-secondary); font-size: 1rem; margin-bottom: 10px; }
 
 /* =========================================
-   7. VOTAÇÃO E FEEDBACK
+   7. VOTAÇÃO
    ========================================= */
 .vote-box {
-    background: var(--lilac-soft); /* Fundo Lilás para destacar */
-    padding: 30px 20px;
+    background: var(--lilac-soft); padding: 30px 20px;
     border-radius: var(--radius-card);
     border: var(--border-width) solid var(--border-color);
-    text-align: center;
-    margin-top: 30px;
-    box-shadow: var(--shadow-hard);
+    text-align: center; margin-top: 30px; box-shadow: var(--shadow-hard);
 }
 body.dark-mode .vote-box { background: #3E2723; }
 
-.vote-box h3 { margin-bottom: 20px; color: var(--white); font-size: 1.2rem; text-shadow: 1px 1px 0 var(--purple-deep); font-family: var(--font-titles); }
-body.dark-mode .vote-box h3 { text-shadow: none; }
+.vote-box h3 { 
+    margin-bottom: 20px; color: var(--white); font-size: 1.2rem; 
+    text-shadow: none; font-family: var(--font-titles);
+}
 
 .thumbs-container { display: flex; gap: 15px; justify-content: center; }
 
 .thumb-btn {
-    flex: 1;
-    padding: 15px;
-    border: 2px solid var(--purple-deep);
-    background: var(--white);
-    color: var(--purple-deep);
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
-    transition: 0.1s;
+    flex: 1; padding: 15px; border: 2px solid var(--purple-deep);
+    background: var(--white); color: var(--purple-deep);
+    border-radius: 12px; font-weight: 700; font-size: 1rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+    box-shadow: var(--shadow-hard); transition: 0.1s;
 }
-
-.thumb-btn:active { transform: translate(4px, 4px); box-shadow: none; }
+.thumb-btn:active { transform: scale(0.98); }
 .thumb-btn.up:hover { background: var(--color-success); }
 .thumb-btn.down:hover { background: var(--color-danger); }
 
 .tags-cloud {
-    margin-top: 20px;
-    padding-top: 15px;
+    margin-top: 20px; padding-top: 15px;
     border-top: 2px dashed rgba(0,0,0,0.1);
     display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
     animation: slideUpFade 0.3s;
 }
-
 .tags-cloud p { width: 100%; font-size: 0.9rem; font-weight: bold; color: var(--purple-deep); margin-bottom: 5px; }
 body.dark-mode .tags-cloud p { color: #fff; }
 
 .tags-cloud button {
-    background: var(--tag-bg);
-    border: 2px solid var(--border-color);
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--tag-text);
-    cursor: pointer;
-    transition: 0.2s;
+    background: var(--tag-bg); border: 2px solid var(--border-color);
+    padding: 8px 16px; border-radius: 20px;
+    font-size: 0.85rem; font-weight: 600; color: var(--tag-text);
+    cursor: pointer; transition: 0.2s;
 }
-
-.tags-cloud button:hover {
-    background: var(--purple-deep);
-    color: var(--white);
-}
+.tags-cloud button:hover { background: var(--purple-deep); color: var(--white); }
 
 /* Toast GPS */
 .gps-toast {
-    position: fixed;
-    top: 90px; left: 50%; transform: translateX(-50%);
-    background: var(--purple-deep);
-    color: var(--white);
-    padding: 12px 24px;
-    border-radius: 30px;
-    border: 2px solid var(--orange-pop);
-    font-size: 0.9rem;
-    font-weight: 600;
-    box-shadow: var(--shadow-hard);
-    z-index: 100;
-    display: flex; align-items: center; gap: 10px;
-    animation: slideDown 0.5s ease-out;
+    position: fixed; top: 90px; left: 50%; transform: translateX(-50%);
+    background: var(--purple-deep); color: var(--white);
+    padding: 12px 24px; border-radius: 30px;
+    border: 2px solid var(--orange-pop); font-size: 0.9rem; font-weight: 600;
+    box-shadow: var(--shadow-hard); z-index: 100;
+    display: flex; align-items: center; gap: 10px; animation: slideDown 0.5s ease-out;
 }
-
 @keyframes slideDown { from { opacity: 0; transform: translate(-50%, -20px); } to { opacity: 1; transform: translate(-50%, 0); } }
 
 /* Loader */
 #loader {
-    text-align: center;
-    padding: 30px;
-    color: var(--purple-deep);
-    font-family: var(--font-titles); /* ATUALIZADO */
-    font-weight: 900;
+    text-align: center; padding: 30px; color: var(--purple-deep);
+    font-family: var(--font-titles); font-weight: 900;
     display: flex; flex-direction: column; align-items: center; gap: 15px;
 }
 body.dark-mode #loader { color: var(--orange-pop); }
@@ -697,34 +481,22 @@ body.dark-mode #loader { color: var(--orange-pop); }
    8. NAVEGAÇÃO MOBILE
    ========================================= */
 .bottom-nav {
-    position: fixed;
-    bottom: 0; left: 0; width: 100%;
-    background: var(--purple-deep); /* Barra escura */
-    display: flex;
-    justify-content: space-around;
-    padding: 15px 0;
-    border-top: 4px solid var(--orange-pop); /* Linha grossa laranja no topo */
+    position: fixed; bottom: 0; left: 0; width: 100%;
+    background: var(--purple-deep);
+    display: flex; justify-content: space-around;
+    padding: 15px 0; border-top: 4px solid var(--orange-pop);
     z-index: 100;
 }
 
 .nav-btn {
-    background: none;
-    border: none;
-    color: rgba(255,255,255,0.5);
-    font-size: 0.8rem;
-    display: flex; flex-direction: column; align-items: center; gap: 5px;
-    cursor: pointer;
-    flex: 1;
-    font-family: var(--font-titles); /* ATUALIZADO */
+    background: none; border: none; color: rgba(255,255,255,0.5);
+    font-size: 0.8rem; display: flex; flex-direction: column; align-items: center; gap: 5px;
+    cursor: pointer; flex: 1; font-family: var(--font-titles);
 }
-
 .nav-btn i { font-size: 1.5rem; margin-bottom: 2px; transition: transform 0.2s; }
 .nav-btn.active { color: var(--orange-pop); font-weight: 700; }
 .nav-btn.active i { transform: scale(1.2); }
 
-/* =========================================
-   9. MEDIA QUERIES
-   ========================================= */
 @media (min-width: 768px) {
     .main-header, #app-container { max-width: 800px; }
     .cards-container { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
