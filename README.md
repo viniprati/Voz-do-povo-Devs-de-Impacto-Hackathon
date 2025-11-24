@@ -88,17 +88,6 @@ Rodar:
 
 Abra o arquivo index.html no seu navegador ou use o Live Server do VS Code.
 
-📸 Screenshots
-Feed de Leis	Fiscal de Obras	Plebiscitos	IA em Ação
-Filtros e Cards	Barra de Progresso	Votação Rápida	Explicação Personalizada
-
-![alt text](https://placehold.co/200x400?text=Home)
-	
-![alt text](https://placehold.co/200x400?text=Obras)
-	
-![alt text](https://placehold.co/200x400?text=Voto)
-	
-![alt text](https://placehold.co/200x400?text=Gemini)
 🔮 Próximos Passos (Roadmap)
 
 Integração com Google Gemini API.
