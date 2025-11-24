@@ -31,8 +31,7 @@
                 <i class="fa-solid fa-moon" id="theme-icon"></i>
             </button>
             
-            <!-- Ícone de Perfil / Login (ALTERADO AQUI) -->
-            <!-- Clicar aqui leva para login.html -->
+            <!-- Ícone de Perfil / Login -->
             <i class="fa-solid fa-user-circle user-icon" onclick="window.location.href='login.html'" style="cursor: pointer;" title="Entrar com Gov.br"></i>
         </div>
     </header>
@@ -71,7 +70,7 @@
         </section>
 
         <!-- =========================================
-             VIEW 2: OBRAS
+             VIEW 2: OBRAS (ATUALIZADA)
              ========================================= -->
         <section id="view-obras" class="view hidden">
             <div class="hero-text">
@@ -80,26 +79,34 @@
             </div>
 
             <div class="cards-container">
-                <!-- Obra 1 -->
-                <article class="pl-card obra-card">
+                
+                <!-- OBRA 1: Reurbanização do Mergulhão (LINKADA) -->
+                <article class="pl-card obra-card" onclick="window.open('https://obrasorg.vercel.app/', '_blank')">
                     <div class="obra-header">
-                        <span class="tag-badge money">🏥 Saúde</span>
+                        <span class="tag-badge money">🏙️ Infraestrutura</span>
                         <span class="status-badge andamento">Em Andamento</span>
                     </div>
-                    <h3>Reforma do Posto de Saúde</h3>
-                    <p>Ampliação da ala de emergência.</p>
+                    
+                    <h3>Reurbanização do Mergulhão</h3>
+                    <p>Painel oficial de execução. Clique para ver detalhes completos.</p>
                     
                     <div class="progress-wrapper">
                         <div class="progress-info">
-                            <span>Progresso: 65%</span>
+                            <span>Avanço Físico:</span>
+                            <span>45%</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-fill" style="width: 65%;"></div>
+                            <!-- 45% conforme solicitado -->
+                            <div class="progress-fill" style="width: 45%;"></div>
                         </div>
+                        <small style="color: #ef4444; font-size: 0.75rem; margin-top: 5px; display: block;">
+                            ⚠ Atraso identificado: 32 dias
+                        </small>
                     </div>
+                    
                     <div class="obra-meta">
-                        <small><i class="fa-solid fa-calendar"></i> Dez/2025</small>
-                        <small><i class="fa-solid fa-coins"></i> R$ 2.5mi</small>
+                        <small><i class="fa-solid fa-calendar"></i> Medição: Nov/2025</small>
+                        <small><i class="fa-solid fa-coins"></i> R$ 12.0 mi</small>
                     </div>
                 </article>
 
@@ -114,7 +121,8 @@
                     
                     <div class="progress-wrapper">
                         <div class="progress-info">
-                            <span>Progresso: 15%</span>
+                            <span>Progresso:</span>
+                            <span>15%</span>
                         </div>
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: 15%; background-color: #ef4444;"></div>
@@ -318,7 +326,7 @@
         </button>
     </nav>
 
-  <!-- BOTÃO FLUTUANTE DE ACESSIBILIDADE -->
+    <!-- BOTÃO FLUTUANTE DE ACESSIBILIDADE -->
     <div class="accessibility-btn" onclick="toggleDaltonismo()" title="Modo Daltônico / Alto Contraste">
         <!-- Trocamos a imagem por um ícone do FontAwesome -->
         <i class="fa-solid fa-universal-access"></i>
