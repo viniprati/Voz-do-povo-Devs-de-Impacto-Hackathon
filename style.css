@@ -721,3 +721,51 @@ body.dark-mode .input-group .btn-icon-download {
 .user-icon {
     cursor: pointer; /* Para indicar que pode clicar pra logar */
 }
+
+
+
+/* =========================================
+   BOTÃO DE ACESSIBILIDADE FLUTUANTE
+   ========================================= */
+.accessibility-btn {
+    position: fixed;
+    top: 50%;                /* Metade da altura da tela */
+    right: 0;                /* Colado na direita */
+    transform: translateY(-50%); /* Centraliza exatamente no meio */
+    
+    background-color: #2563eb; /* Azul padrão de acessibilidade */
+    padding: 12px 10px 12px 15px; /* Mais espaço na esquerda para ficar bonito */
+    
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+    box-shadow: -4px 4px 15px rgba(0, 0, 0, 0.2);
+    
+    cursor: pointer;
+    z-index: 9999; /* Ficar em cima de tudo */
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+.accessibility-btn:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-50%) translateX(-5px); /* Efeito de "puxar" pra fora */
+}
+
+.accessibility-btn img {
+    width: 32px;  /* Tamanho do ícone */
+    height: 32px;
+    display: block;
+    filter: brightness(0) invert(1); /* Deixa o ícone branco se for preto */
+}
+
+/* === CLASSE QUE ALTERA AS CORES PARA DALTÔNICOS === */
+/* Aplica um filtro de alto contraste e escala de cinza na página toda */
+body.daltonico-mode {
+    filter: contrast(120%) grayscale(100%);
+}
+
+/* Opcional: Se quiser apenas inverter cores em vez de preto e branco */
+/*
+body.daltonico-mode {
+    filter: invert(1) hue-rotate(180deg);
+}
+*/

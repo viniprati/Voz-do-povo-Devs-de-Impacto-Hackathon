@@ -406,4 +406,32 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(simulateGPS, 1500);
 
     checkLoginStatus();
+
+// ==========================================================================
+// FUNÇÃO DE ACESSIBILIDADE (DALTÔNICO)
+// ==========================================================================
+function toggleDaltonismo() {
+    const body = document.body;
+    
+    // Alterna a classe
+    body.classList.toggle('daltonico-mode');
+    
+    // (Opcional) Salva a preferência no navegador
+    if (body.classList.contains('daltonico-mode')) {
+        localStorage.setItem('accessibilityMode', 'on');
+    } else {
+        localStorage.setItem('accessibilityMode', 'off');
+    }
+}
+
+// Verifica se já estava ativado ao carregar a página
+document.addEventListener('DOMContentLoaded', () => {
+    // ... seus outros códigos de load ...
+    
+    // Verifica preferência salva
+    if (localStorage.getItem('accessibilityMode') === 'on') {
+        document.body.classList.add('daltonico-mode');
+    }
 });
+});
+
