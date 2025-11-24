@@ -64,21 +64,13 @@ Caso queira clonar e testar em sua máquina:
 
 Clone o repositório:
 
-code
-Bash
-download
-content_copy
-expand_less
+```
 git clone https://github.com/seu-usuario/voz-do-povo.git
-
+```
 Acesse a pasta:
-
-code
-Bash
-download
-content_copy
-expand_less
+```
 cd voz-do-povo
+```
 
 Configuração da API:
 
