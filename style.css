@@ -768,4 +768,16 @@ body.daltonico-mode {
 body.daltonico-mode {
     filter: invert(1) hue-rotate(180deg);
 }
-*/
+/* === MODO DALTÔNICO (ATIVADO PELO JS) === */
+body.daltonico-mode {
+    /* 
+       grayscale(1) = Tira as cores (preto e branco)
+       contrast(1.2) = Aumenta o contraste em 20% para facilitar leitura 
+    */
+    filter: grayscale(100%) contrast(120%);
+}
+
+/* Opcional: Ajuste para imagens não ficarem ruins, se quiser */
+body.daltonico-mode img {
+    filter: grayscale(0%); /* Mantém imagens originais se preferir */
+}
