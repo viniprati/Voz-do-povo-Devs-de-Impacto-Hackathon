@@ -30,8 +30,10 @@
             <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar Tema">
                 <i class="fa-solid fa-moon" id="theme-icon"></i>
             </button>
-            <!-- Ícone de Perfil -->
-            <i class="fa-solid fa-user-circle user-icon"></i>
+            
+            <!-- Ícone de Perfil / Login (ALTERADO AQUI) -->
+            <!-- Clicar aqui leva para login.html -->
+            <i class="fa-solid fa-user-circle user-icon" onclick="window.location.href='login.html'" style="cursor: pointer;" title="Entrar com Gov.br"></i>
         </div>
     </header>
 
@@ -45,81 +47,141 @@
     <main id="app-container">
 
         <!-- =========================================
-             VIEW 1: HOME (Feed Inteligente)
+             VIEW 1: HOME (LEIS COM FILTRO DINÂMICO)
              ========================================= -->
         <section id="view-home" class="view active">
             
-            <!-- Filtros de Contexto -->
+            <!-- Filtros de Contexto (Com funções JS) -->
             <div class="filter-scroll">
-                <button class="filter-pill">🇧🇷 Brasil</button>
-                <button class="filter-pill">🔥 Em Alta</button>
-                <button class="filter-pill active">📍 Minha Rua</button>
-            <button class="filter-pill">📚 Educação</button>
+                <button class="filter-pill active" onclick="filterFeed('minha_rua', this)">📍 Minha Rua</button>
+                <button class="filter-pill" onclick="filterFeed('brasil', this)">🇧🇷 Brasil</button>
+                <button class="filter-pill" onclick="filterFeed('em_alta', this)">🔥 Em Alta</button>
             </div>
 
             <div class="hero-text">
-                <h1>Leis explicadas pra você ouvir.</h1>
-                <p>Sem leitura chata. Escolha um tema e aperte o play.</p>
+                <h1>Leis explicadas.</h1>
+                <p>Escolha um tema e aperte o play.</p>
             </div>
 
-            <!-- BOX DE MONITORAMENTO DE OBRAS -->
-            <div class="monitor-card" onclick="openObrasSite()">
-                <div class="monitor-icon">
-                    <i class="fa-solid fa-hard-hat"></i>
-                </div>
-                <div class="monitor-info">
-                    <h3>Fiscal de Obras</h3>
-                    <p>Veja o andamento das construções na sua cidade.</p>
-                </div>
-                <div class="monitor-action">
-                    <span>Acessar</span>
-                    <i class="fa-solid fa-chevron-right"></i>
-                </div>
+            <!-- CONTAINER ONDE O JS VAI JOGAR OS CARDS -->
+            <div id="feed-container" class="cards-container">
+                <!-- O conteúdo aqui será gerado pelo script.js -->
             </div>
 
-            <!-- Lista de Cards Atualizada com os 5 PDFs -->
+        </section>
+
+        <!-- =========================================
+             VIEW 2: OBRAS
+             ========================================= -->
+        <section id="view-obras" class="view hidden">
+            <div class="hero-text">
+                <h1>Fiscal de Obras 🚧</h1>
+                <p>Acompanhe o dinheiro público na sua rua.</p>
+            </div>
+
             <div class="cards-container">
-                
-                <!-- Card 1: Show/Drogas (SP) -->
-                <article class="pl-card" onclick="selectPL(1)">
-                    <span class="tag-badge urgent">🛡️ Segurança</span>
-                    <h3>Proibição de Apologia ao Crime (SP)</h3>
-                    <p>Veda shows financiados pela prefeitura que incentivem drogas ou crime para menores.</p>
+                <!-- Obra 1 -->
+                <article class="pl-card obra-card">
+                    <div class="obra-header">
+                        <span class="tag-badge money">🏥 Saúde</span>
+                        <span class="status-badge andamento">Em Andamento</span>
+                    </div>
+                    <h3>Reforma do Posto de Saúde</h3>
+                    <p>Ampliação da ala de emergência.</p>
+                    
+                    <div class="progress-wrapper">
+                        <div class="progress-info">
+                            <span>Progresso: 65%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 65%;"></div>
+                        </div>
+                    </div>
+                    <div class="obra-meta">
+                        <small><i class="fa-solid fa-calendar"></i> Dez/2025</small>
+                        <small><i class="fa-solid fa-coins"></i> R$ 2.5mi</small>
+                    </div>
                 </article>
 
-                <!-- Card 2: PL das Fake News -->
-                <article class="pl-card" onclick="selectPL(2)">
-                    <span class="tag-badge urgent">🔥 Polêmica</span>
-                    <h3>PL das Fake News (2630/2020)</h3>
-                    <p>Lei de Liberdade, Responsabilidade e Transparência na Internet.</p>
+                <!-- Obra 2 -->
+                <article class="pl-card obra-card">
+                    <div class="obra-header">
+                        <span class="tag-badge urgent">🛣️ Asfalto</span>
+                        <span class="status-badge atrasada">Atrasada</span>
+                    </div>
+                    <h3>Recapeamento da Av. Principal</h3>
+                    <p>Operação tapa-buraco e sinalização.</p>
+                    
+                    <div class="progress-wrapper">
+                        <div class="progress-info">
+                            <span>Progresso: 15%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 15%; background-color: #ef4444;"></div>
+                        </div>
+                    </div>
+                    <div class="obra-meta">
+                        <small><i class="fa-solid fa-calendar"></i> Jan/2024</small>
+                        <small><i class="fa-solid fa-coins"></i> R$ 500k</small>
+                    </div>
                 </article>
-
-                <!-- Card 3: Bullying -->
-                <article class="pl-card" onclick="selectPL(3)">
-                    <span class="tag-badge shop">🏫 Educação</span>
-                    <h3>Protocolo Anti-Bullying</h3>
-                    <p>Cria mecanismos de proteção psicológica e combate à violência nas escolas.</p>
-                </article>
-
-                <!-- Card 4: Linguagem Neutra -->
-                <article class="pl-card" onclick="selectPL(4)">
-                    <span class="tag-badge shop">🗣️ Cultura</span>
-                    <h3>Proibição de Linguagem Neutra</h3>
-                    <p>Veda o uso de "todes/amigues" em escolas e concursos públicos.</p>
-                </article>
-
-                <!-- Card 5: Código Civil -->
-                <article class="pl-card" onclick="selectPL(5)">
-                    <span class="tag-badge money">⚖️ Legislação</span>
-                    <h3>Atualização do Código Civil</h3>
-                    <p>Reforma massiva sobre direitos digitais, família, herança e contratos.</p>
-                </article>
-
             </div>
         </section>
 
         <!-- =========================================
-             VIEW 2: DETALHES (Áudio & Votação)
+             VIEW 3: PLEBISCITOS
+             ========================================= -->
+        <section id="view-plebiscitos" class="view hidden">
+            <div class="hero-text">
+                <h1>Votação Popular 🗳️</h1>
+                <p>Sua opinião decide o futuro da cidade.</p>
+            </div>
+
+            <div class="cards-container">
+                <!-- Plebiscito 1 -->
+                <article class="pl-card plebiscito-card">
+                    <span class="tag-badge shop">🌳 Urbano</span>
+                    <h3>Nome da Praça Matriz</h3>
+                    <p>Mudar para "Praça dos Fundadores"?</p>
+                    
+                    <div class="vote-preview">
+                        <button class="vote-btn yes">Sim (40%)</button>
+                        <button class="vote-btn no">Não (60%)</button>
+                    </div>
+                    <small class="vote-count">1.240 votos</small>
+                </article>
+
+                <!-- Plebiscito 2 -->
+                <article class="pl-card plebiscito-card">
+                    <span class="tag-badge urgent">🚌 Transporte</span>
+                    <h3>Passe Livre aos Domingos</h3>
+                    <p>Gratuidade no ônibus municipal.</p>
+                    
+                    <div class="vote-preview">
+                        <button class="vote-btn yes">A favor</button>
+                        <button class="vote-btn no">Contra</button>
+                    </div>
+                    <small class="vote-count">Aberta até 30/11</small>
+                </article>
+            </div>
+        </section>
+        
+        <!-- =========================================
+             VIEW 4: SOBRE
+             ========================================= -->
+        <section id="view-about" class="view hidden">
+             <div class="hero-text">
+                <h1>Sobre o Projeto</h1>
+                <p>Hackathon 2024 - Voz do Povo</p>
+            </div>
+            <div class="pl-card">
+                <h3>Nossa Missão</h3>
+                <p>Traduzir a burocracia estatal para a linguagem do dia a dia usando Inteligência Artificial.</p>
+            </div>
+        </section>
+
+        <!-- =========================================
+             VIEW 5: DETALHES (Player de Áudio e IA)
              ========================================= -->
         <section id="view-details" class="view hidden">
             <div class="nav-back" onclick="navigateTo('home')">
@@ -131,7 +193,7 @@
                     <h1 id="pl-title-display">Título do Projeto</h1>
                     <p id="pl-summary-display">Resumo oficial...</p>
 
-                    <!-- BOTÃO DE DOWNLOAD GRANDE (Opcional, mas bom manter) -->
+                    <!-- Botão Download PDF Grande -->
                     <a id="btn-view-pdf" href="#" class="pdf-action-btn hidden" download>
                         <i class="fa-solid fa-file-pdf"></i> Baixar Documento Completo
                     </a>
@@ -139,18 +201,17 @@
 
                 <hr class="divider">
 
-                <!-- CAIXA DE INTERAÇÃO (Chat) -->
+                <!-- Caixa de Interação IA -->
                 <div class="ai-interaction-box">
                     <label>Me explica como se fosse...</label>
                     <div class="input-group">
                         <input type="text" id="user-interest" placeholder="Ex: Futebol, Novela, Conversa de bar...">
                         
-                        <!-- NOVO BOTÃO PEQUENO DE DOWNLOAD (Substitui o Clipe) -->
+                        <!-- Botão Download PDF Pequeno -->
                         <a id="mini-pdf-btn" href="#" download class="btn-icon-download" title="Baixar PDF Original" style="display: none;">
                             <i class="fa-solid fa-download"></i>
                         </a>
 
-                        <!-- Botão Enviar -->
                         <button id="btn-explain" onclick="getAIExplanation()">
                             <i class="fa-solid fa-paper-plane"></i>
                         </button>
@@ -164,7 +225,7 @@
                         <i class="fa-solid fa-spinner fa-spin"></i> Traduzindo para o povo...
                     </div>
 
-                    <!-- 1. CARD DE ÁUDIO -->
+                    <!-- 1. Card de Áudio -->
                     <div id="audio-card" class="audio-card hidden">
                         <div class="audio-header">
                             <i class="fa-solid fa-headphones"></i>
@@ -196,13 +257,13 @@
                         </div>
                     </div>
 
-                    <!-- 2. TEXTO -->
+                    <!-- 2. Texto Explicativo -->
                     <div id="explanation-content" class="hidden">
                         <h3>📝 Explicação:</h3>
                         <p id="text-output"></p>
                     </div>
 
-                    <!-- 3. VOTAÇÃO -->
+                    <!-- 3. Votação -->
                     <div id="vote-section" class="vote-box hidden">
                         <h3>O que você acha dessa lei?</h3>
                         <div class="thumbs-container">
@@ -232,10 +293,25 @@
 
     <!-- NAVEGAÇÃO MOBILE -->
     <nav class="bottom-nav">
+        <!-- Botão Início -->
         <button class="nav-btn active" onclick="navigateTo('home')" id="nav-home">
             <i class="fa-solid fa-house"></i>
             <span>Início</span>
         </button>
+        
+        <!-- Botão Obras -->
+        <button class="nav-btn" onclick="navigateTo('obras')" id="nav-obras">
+            <i class="fa-solid fa-hard-hat"></i>
+            <span>Obras</span>
+        </button>
+
+        <!-- Botão Plebiscitos -->
+        <button class="nav-btn" onclick="navigateTo('plebiscitos')" id="nav-plebiscitos">
+            <i class="fa-solid fa-check-to-slot"></i>
+            <span>Votação</span>
+        </button>
+
+        <!-- Botão Sobre -->
         <button class="nav-btn" onclick="navigateTo('about')" id="nav-about">
             <i class="fa-solid fa-circle-info"></i>
             <span>Sobre</span>

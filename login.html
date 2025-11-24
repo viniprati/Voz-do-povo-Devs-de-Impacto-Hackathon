@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar com gov.br</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Rawline:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Estilo Isolado imitando Gov.br */
+        body {
+            font-family: 'Rawline', sans-serif; /* Fonte oficial do governo */
+            background-color: #fff;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+        }
+        .gov-header {
+            margin-bottom: 30px;
+        }
+        .gov-logo {
+            height: 40px;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        p.subtitle {
+            font-size: 0.9rem;
+            color: #555;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            outline: none;
+        }
+        input:focus {
+            border: 2px solid #1351b4;
+            padding: 11px; /* Ajuste para borda */
+        }
+        .btn-gov {
+            width: 100%;
+            background-color: #1351b4; /* Azul Gov.br */
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-gov:hover {
+            background-color: #0c326f;
+        }
+        .divider {
+            margin: 20px 0;
+            border-top: 1px solid #eee;
+            position: relative;
+            text-align: center;
+        }
+        .divider span {
+            background: #fff;
+            padding: 0 10px;
+            position: relative;
+            top: -10px;
+            color: #666;
+            font-size: 0.8rem;
+        }
+        .banks-list {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            opacity: 0.6;
+        }
+        .loader {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+            color: #1351b4;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="gov-header">
+            <!-- IMAGEM ALTERADA AQUI -->
+            <img src="logo/logogov.png" alt="Logo Gov.br" class="gov-logo">
+            <h1>Identifique-se no gov.br</h1>
+            <p class="subtitle">Voz do Povo solicita seus dados pessoais.</p>
+        </div>
+
+        <form id="gov-form" onsubmit="handleGovLogin(event)">
+            <div class="input-group">
+                <label for="cpf">Número do CPF</label>
+                <input type="text" id="cpf" placeholder="Digite seu CPF" required>
+            </div>
+
+            <div class="input-group hidden" id="pass-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" placeholder="Digite sua senha">
+            </div>
+
+            <button type="submit" class="btn-gov" id="btn-action">Continuar</button>
+            
+            <div class="loader" id="loader">
+                <i class="fa-solid fa-circle-notch fa-spin"></i> Autenticando...
+            </div>
+        </form>
+
+        <div class="divider">
+            <span>Ou entre com seu banco</span>
+        </div>
+
+        <div class="banks-list">
+            <i class="fa-solid fa-building-columns fa-2x"></i>
+            <i class="fa-solid fa-money-check-dollar fa-2x"></i>
+            <i class="fa-solid fa-landmark fa-2x"></i>
+        </div>
+    </div>
+
+    <script>
+        let step = 1;
+
+        function handleGovLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-action');
+            const passGroup = document.getElementById('pass-group');
+            const cpfInput = document.getElementById('cpf');
+            const loader = document.getElementById('loader');
+
+            if (step === 1) {
+                // Simula verificação do CPF
+                if(cpfInput.value.length < 3) {
+                    alert("CPF Inválido para teste.");
+                    return;
+                }
+                btn.innerText = "Entrar";
+                passGroup.style.display = "block"; // Mostra senha
+                document.getElementById('password').focus();
+                step = 2;
+            } else {
+                // Simula Login
+                btn.style.display = 'none';
+                loader.style.display = 'block';
+
+                setTimeout(() => {
+                    // SALVA O USUÁRIO NO NAVEGADOR (LOCALSTORAGE)
+                    const fakeUser = {
+                        name: "Cidadão Brasileiro",
+                        cpf: cpfInput.value,
+                        // Aqui também pode ser legal usar uma foto local se quiser, ou manter a url externa
+                        avatar: "https://www.gov.br/cdn/sso-status-bar/src/image/user.png",
+                        logged: true
+                    };
+                    localStorage.setItem('vozDoPovoUser', JSON.stringify(fakeUser));
+
+                    // VOLTA PARA O APP
+                    window.location.href = "index.html"; 
+                }, 1500);
+            }
+        }
+    </script>
+</body>
+</html>
